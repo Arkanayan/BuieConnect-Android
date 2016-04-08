@@ -24,3 +24,8 @@ before_script:
     - echo "Travis branch is $TRAVIS_BRANCH"
 
 script: TERM=dumb ./gradlew assembleDebug
+
+notifications:
+    email:
+        on_success: change
+        on_failure: change
