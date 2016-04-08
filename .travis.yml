@@ -22,3 +22,5 @@ android:
 before_script:
     - echo "Travis building BuieConnect"
     - echo "Travis branch is $TRAVIS_BRANCH"
+
+script: TERM=dumb ./gradlew assembleDebug
