@@ -1,4 +1,4 @@
-package arkanayan.me.buieconnect;
+package me.arkanayan.buieconnect;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
