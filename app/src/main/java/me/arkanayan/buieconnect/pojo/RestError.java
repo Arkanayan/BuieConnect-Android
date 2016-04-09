@@ -3,8 +3,14 @@ package me.arkanayan.buieconnect.pojo;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Converter;
+import retrofit2.GsonConverterFactory;
 
 
 public class RestError {
@@ -65,4 +71,12 @@ public class RestError {
         return this.getMessage();
     }
 
+    public static RestError getErrorObj(ResponseBody errorBody) throws IOException {
+
+        Converter<ResponseBody, ?> converter =
+                GsonConverterFactory.create().responseBodyConverter(RestError.class,
+                        RestError.class.getAnnotations(), null);
+
+        return (RestError) converter.convert(errorBody);
+    }
 }

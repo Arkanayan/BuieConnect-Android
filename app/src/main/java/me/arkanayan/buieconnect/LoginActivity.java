@@ -18,6 +18,9 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import me.arkanayan.buieconnect.pojo.AuthResponse;
@@ -27,6 +30,8 @@ import me.arkanayan.buieconnect.utils.Prefs;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Converter;
+import retrofit2.GsonConverterFactory;
 import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -100,6 +105,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             responseCall.enqueue(new Callback<AuthResponse>() {
                 @Override
                 public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                    progressDialog.dismiss();
                     AuthResponse authResponse = response.body();
                     if (authResponse != null && response.isSuccessful()) {
                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
@@ -116,6 +122,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             finish();
                         }
                     } else {
+
+                        try {
+                            RestError error = RestError.getErrorObj(response.errorBody());
+                            Log.d(TAG, "onResponse: Errorbody: " + error.getMessage());
+                            Toast.makeText(LoginActivity.this, "Error, " + error.getMessage() , Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                         Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
 
                     }
