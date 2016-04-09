@@ -44,6 +44,7 @@ public class Prefs {
          * String: SAMPLE_KEY, SAMPLE_STR or just SAMPLE
          */
         public static final String IS_LOGGED_IN = "is_logged_in";
+        public static final String AUTH_TOKEN = "auth_token";
 
     }
 

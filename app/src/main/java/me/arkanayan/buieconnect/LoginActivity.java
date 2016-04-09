@@ -1,9 +1,8 @@
 package me.arkanayan.buieconnect;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,10 +16,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.server.converter.StringToIntConverter;
+import com.google.gson.Gson;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import me.arkanayan.buieconnect.pojo.AuthResponse;
+import me.arkanayan.buieconnect.pojo.RestError;
+import me.arkanayan.buieconnect.services.LoginService;
+import me.arkanayan.buieconnect.utils.Prefs;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
@@ -77,18 +84,57 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult: " + result.isSuccess());
+        LoginService loginService = new LoginService();
         if (result.isSuccess()) {
             // Signed in successfully
             GoogleSignInAccount acct = result.getSignInAccount();
             Log.d(TAG, "handleSignInResult: Name: " + acct.getDisplayName());
             Log.d(TAG, "handleSignInResult: idToken: " + acct.getIdToken());
-        } else {
-            Toast.makeText(LoginActivity.this, "Sorry, Login Failed", Toast.LENGTH_SHORT).show();
+
+            Call<AuthResponse> responseCall = loginService.getLoginCall(acct.getIdToken());
+            final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage("Authenticating...");
+            progressDialog.show();
+
+            responseCall.enqueue(new Callback<AuthResponse>() {
+                @Override
+                public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                    AuthResponse authResponse = response.body();
+                    if (authResponse != null && response.isSuccessful()) {
+                        Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onResponse: authtoken: " + authResponse.getAuthToken());
+
+                        Prefs.getInstance(LoginActivity.this).put(Prefs.Key.AUTH_TOKEN, authResponse.getAuthToken());
+                        Prefs.getInstance().put(Prefs.Key.IS_LOGGED_IN, true);
+
+                        if (authResponse.getFirstTime()) {
+                            Toast.makeText(LoginActivity.this, "First Time", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(mainActivity);
+                            finish();
+                        }
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<AuthResponse> call, Throwable t) {
+                    progressDialog.dismiss();
+                    Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
         }
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(LoginActivity.this, "Sorry, Login Failed", Toast.LENGTH_SHORT).show();
 
     }
 }
