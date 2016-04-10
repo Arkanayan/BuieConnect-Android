@@ -14,6 +14,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+
+import io.fabric.sdk.android.Fabric;
 import me.arkanayan.buieconnect.utils.Prefs;
 
 public class MainActivity extends AppCompatActivity
@@ -22,6 +27,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         // Launches MainActivity if user is logged in else launches login activity
         boolean isLoggedIn = Prefs.getInstance(this).getBoolean(Prefs.Key.IS_LOGGED_IN);
         if (!isLoggedIn) {
@@ -31,6 +37,11 @@ public class MainActivity extends AppCompatActivity
         }
 
         setContentView(R.layout.activity_main);
+        Answers.getInstance().logContentView(new ContentViewEvent()
+            .putContentName("Main Screen")
+            .putContentType("Screen")
+            .putContentId("screen-main"));
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -55,6 +66,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
+
 
     @Override
     public void onBackPressed() {
