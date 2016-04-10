@@ -29,6 +29,9 @@
         <activity android:name=".LoginActivity" android:theme="@style/AppTheme.Dark">
 
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="644034b6656fd827bb93e481bc1e62f6f0708cf5" />
     </application>
 
 </manifest>
