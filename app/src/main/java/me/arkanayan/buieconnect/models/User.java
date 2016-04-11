@@ -1,7 +1,16 @@
-package me.arkanayan.buieconnect.pojo;
+package me.arkanayan.buieconnect.models;
 
+import android.app.Presentation;
+import android.content.Context;
+
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Date;
+
+import me.arkanayan.buieconnect.exceptions.UserDetailsNotPresent;
+import me.arkanayan.buieconnect.utils.Prefs;
 
 /**
  * Created by arka on 4/10/16.
@@ -19,7 +28,7 @@ public class User {
     private String firstName;
     @SerializedName("reg_date")
     @Expose
-    private String regDate;
+    private Date regDate;
     @SerializedName("is_admin")
     @Expose
     private Boolean isAdmin;
@@ -28,25 +37,25 @@ public class User {
     private Integer id;
     @SerializedName("admission_year")
     @Expose
-    private Object admissionYear;
+    private int admissionYear;
     @SerializedName("department_name")
     @Expose
-    private Object departmentName;
+    private String departmentName;
     @SerializedName("current_semester")
     @Expose
-    private Object currentSemester;
+    private int currentSemester;
     @SerializedName("email")
     @Expose
     private String email;
     @SerializedName("univ_roll")
     @Expose
-    private Object univRoll;
+    private long univRoll;
     @SerializedName("passout_year")
     @Expose
-    private Object passoutYear;
+    private int passoutYear;
     @SerializedName("gcm_reg_id")
     @Expose
-    private Object gcmRegId;
+    private String gcmRegId;
     @SerializedName("lastName")
     @Expose
     private String lastName;
@@ -116,7 +125,7 @@ public class User {
      * @return
      * The regDate
      */
-    public String getRegDate() {
+    public Date getRegDate() {
         return regDate;
     }
 
@@ -125,7 +134,7 @@ public class User {
      * @param regDate
      * The reg_date
      */
-    public void setRegDate(String regDate) {
+    public void setRegDate(Date regDate) {
         this.regDate = regDate;
     }
 
@@ -179,7 +188,7 @@ public class User {
      * @param admissionYear
      * The admission_year
      */
-    public void setAdmissionYear(Object admissionYear) {
+    public void setAdmissionYear(int admissionYear) {
         this.admissionYear = admissionYear;
     }
 
@@ -188,7 +197,7 @@ public class User {
      * @return
      * The departmentName
      */
-    public Object getDepartmentName() {
+    public String getDepartmentName() {
         return departmentName;
     }
 
@@ -197,7 +206,7 @@ public class User {
      * @param departmentName
      * The department_name
      */
-    public void setDepartmentName(Object departmentName) {
+    public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
     }
 
@@ -215,7 +224,7 @@ public class User {
      * @param currentSemester
      * The current_semester
      */
-    public void setCurrentSemester(Object currentSemester) {
+    public void setCurrentSemester(int currentSemester) {
         this.currentSemester = currentSemester;
     }
 
@@ -251,7 +260,7 @@ public class User {
      * @param univRoll
      * The univ_roll
      */
-    public void setUnivRoll(Object univRoll) {
+    public void setUnivRoll(long univRoll) {
         this.univRoll = univRoll;
     }
 
@@ -269,7 +278,7 @@ public class User {
      * @param passoutYear
      * The passout_year
      */
-    public void setPassoutYear(Object passoutYear) {
+    public void setPassoutYear(int passoutYear) {
         this.passoutYear = passoutYear;
     }
 
@@ -287,7 +296,7 @@ public class User {
      * @param gcmRegId
      * The gcm_reg_id
      */
-    public void setGcmRegId(Object gcmRegId) {
+    public void setGcmRegId(String gcmRegId) {
         this.gcmRegId = gcmRegId;
     }
 
@@ -343,6 +352,49 @@ public class User {
      */
     public void setUrl(String url) {
         this.url = url;
+    }
+
+
+    public static User loadUserFromPreference(Context context) throws UserDetailsNotPresent {
+
+
+        Prefs prefs = Prefs.getInstance(context);
+
+        if (prefs.getBoolean(Prefs.Key.IS_USER_DETAILS_PRESENT)) {
+            /*
+            User user = new User();
+            user.setFirstName(prefs.getString(Prefs.Key.FIRST_NAME));
+            user.setLastName(prefs.getString(Prefs.Key.LAST_NAME));
+            user.setAdmissionYear(prefs.getInt(Prefs.Key.ADMISSION_YEAR));
+            user.setCurrentSemester(prefs.getInt(Prefs.Key.CURRENT_SEM));
+            user.setDepartmentName(prefs.getString(Prefs.Key.DEPT_NAME));
+            user.setEmail(prefs.getString(Prefs.Key.EMAIL));
+            user.setGcmRegId(prefs.getString(Prefs.Key.GCM_REG_ID));
+            user.setUrl(prefs.getString(Prefs.Key.URL));
+            user.setId(prefs.getInt(Prefs.Key.USER_ID));
+            user.setGoogleSub(prefs.getString(Prefs.Key.GOOGLE_SUB));
+            user.setIsAdmin(prefs.getBoolean(Prefs.Key.IS_ADMIN));
+            user.setVerified(prefs.getBoolean(Prefs.Key.IS_VERIFIED));
+            user.setUnivRoll(prefs.getLong(Prefs.Key.UNIV_ROLL));
+            user.setIsAlumnus(prefs.getBoolean(Prefs.Key.IS_ALUMNUS));
+            user.setPassoutYear(prefs.getInt(Prefs.Key.PASSOUT_YEAR));*/
+            Gson gson = new Gson();
+            String json = prefs.getString(Prefs.Key.USER);
+
+            return gson.fromJson(json, User.class);
+        } else {
+            throw new UserDetailsNotPresent();
+        }
+    }
+
+    public static void storeUser(Context context ,User user) {
+
+        Prefs prefs = Prefs.getInstance(context);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(user);
+        prefs.put(Prefs.Key.USER, json);
+        prefs.put(Prefs.Key.IS_USER_DETAILS_PRESENT, true);
     }
 
 }

@@ -1,6 +1,7 @@
-package me.arkanayan.buieconnect;
+package me.arkanayan.buieconnect.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -16,22 +17,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import me.arkanayan.buieconnect.pojo.AuthResponse;
-import me.arkanayan.buieconnect.pojo.RestError;
+import me.arkanayan.buieconnect.R;
+import me.arkanayan.buieconnect.models.AuthResponse;
+import me.arkanayan.buieconnect.models.RestError;
 import me.arkanayan.buieconnect.services.LoginService;
 import me.arkanayan.buieconnect.utils.Prefs;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Converter;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -97,6 +94,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.d(TAG, "handleSignInResult: idToken: " + acct.getIdToken());
 
             Call<AuthResponse> responseCall = loginService.getLoginCall(acct.getIdToken());
+
             final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
             progressDialog.setIndeterminate(true);
             progressDialog.setMessage("Authenticating...");
@@ -111,11 +109,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onResponse: authtoken: " + authResponse.getAuthToken());
 
+                        // Update shared preferences
                         Prefs.getInstance(LoginActivity.this).put(Prefs.Key.AUTH_TOKEN, authResponse.getAuthToken());
                         Prefs.getInstance().put(Prefs.Key.IS_LOGGED_IN, true);
 
                         if (authResponse.getFirstTime()) {
-                            Toast.makeText(LoginActivity.this, "First Time", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
                         } else {
                             Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(mainActivity);
@@ -151,5 +150,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(LoginActivity.this, "Sorry, Login Failed", Toast.LENGTH_SHORT).show();
 
+    }
+
+    public static Intent getLoginIntent(Context context) {
+        return new Intent(context, LoginActivity.class);
     }
 }

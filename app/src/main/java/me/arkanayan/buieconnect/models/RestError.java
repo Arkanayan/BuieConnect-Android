@@ -1,5 +1,5 @@
 
-package me.arkanayan.buieconnect.pojo;
+package me.arkanayan.buieconnect.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

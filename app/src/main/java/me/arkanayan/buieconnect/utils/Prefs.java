@@ -2,6 +2,8 @@ package me.arkanayan.buieconnect.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.IntDef;
+import android.support.annotation.StringDef;
 
 /*
  * A Singleton for managing your SharedPreferences.
@@ -31,6 +33,8 @@ public class Prefs {
     private SharedPreferences.Editor mEditor;
     private boolean mBulkUpdate = false;
 
+    @StringDef({Key.IS_ADMIN, Key.ADMISSION_YEAR, Key.AUTH_TOKEN})
+    public @interface Keys {}
     /**
      * Class for keeping all the keys used for shared preferences in one place.
      */
@@ -45,6 +49,26 @@ public class Prefs {
          */
         public static final String IS_LOGGED_IN = "is_logged_in";
         public static final String AUTH_TOKEN = "auth_token";
+        public static final String IS_USER_DETAILS_PRESENT = "is_user_detail_present";
+
+        // User details
+        public static final String USER = "user_details";
+
+        public static final String USER_ID = "user_id";
+        public static final String FIRST_NAME = "first_name";
+        public static final String LAST_NAME = "last_name";
+        public static final String IS_ALUMNUS = "is_alumnus";
+        public static final String IS_ADMIN = "is_admin";
+        public static final String ADMISSION_YEAR = "admission_year";
+        public static final String DEPT_NAME = "department_name";
+        public static final String EMAIL = "email_address";
+        public static final String UNIV_ROLL = "univ_roll";
+        public static final String PASSOUT_YEAR = "passout_year";
+        public static final String GCM_REG_ID = "gcm_reg_id";
+        public static final String IS_VERIFIED = "is_verified";
+        public static final String URL = "url";
+        public static final String GOOGLE_SUB = "google_sub";
+        public static final String CURRENT_SEM = "current_semester";
 
     }
 

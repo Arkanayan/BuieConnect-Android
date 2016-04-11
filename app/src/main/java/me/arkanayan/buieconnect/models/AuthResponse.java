@@ -1,4 +1,4 @@
-package me.arkanayan.buieconnect.pojo;
+package me.arkanayan.buieconnect.models;
 
 /**
  * Created by arka on 4/9/16.

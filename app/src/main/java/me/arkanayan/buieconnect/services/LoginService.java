@@ -6,16 +6,12 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import me.arkanayan.buieconnect.ServiceGenerator;
-import me.arkanayan.buieconnect.interfaces.Login;
-import me.arkanayan.buieconnect.pojo.AuthResponse;
-import me.arkanayan.buieconnect.pojo.LoginToken;
-import me.arkanayan.buieconnect.pojo.RestError;
+import me.arkanayan.buieconnect.interfaces.LoginInterface;
+import me.arkanayan.buieconnect.models.AuthResponse;
+import me.arkanayan.buieconnect.models.LoginToken;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by arka on 4/9/16.
@@ -24,10 +20,10 @@ public class LoginService {
 
     private String TAG = this.getClass().getSimpleName();
 
-    private Login login;
+    private LoginInterface loginInterface;
 
     public LoginService() {
-        this.login = ServiceGenerator.createService(Login.class);
+        this.loginInterface = ServiceGenerator.createService(LoginInterface.class);
     }
 
     public Call<AuthResponse> getLoginCall(String idToken) {
@@ -39,7 +35,7 @@ public class LoginService {
         Log.d(TAG, "doLogin: Gson json: " + json);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
 
-        Call<AuthResponse> responseCall = login.login(requestBody);
+        Call<AuthResponse> responseCall = loginInterface.login(requestBody);
 
         return responseCall;
     }

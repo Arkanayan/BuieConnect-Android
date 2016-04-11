@@ -1,4 +1,4 @@
-package me.arkanayan.buieconnect;
+package me.arkanayan.buieconnect.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +19,7 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 
 import io.fabric.sdk.android.Fabric;
+import me.arkanayan.buieconnect.R;
 import me.arkanayan.buieconnect.utils.Prefs;
 
 public class MainActivity extends AppCompatActivity

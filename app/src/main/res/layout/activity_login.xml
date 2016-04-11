@@ -10,7 +10,7 @@
     android:orientation="vertical"
     android:backgroundTint="@color/primary_darker"
     android:background="@color/primary_darker"
-    tools:context="me.arkanayan.buieconnect.LoginActivity">
+    tools:context=".activities.LoginActivity">
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
