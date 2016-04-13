@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Bind(R.id.sign_in_button) SignInButton signInButton;
     private GoogleApiClient mGoogleApiClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +116,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         if (authResponse.getFirstTime()) {
                             Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
+                            // todo launch edit user activity here
                         } else {
                             Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(mainActivity);

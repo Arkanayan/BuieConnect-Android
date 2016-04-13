@@ -3,12 +3,17 @@ package me.arkanayan.buieconnect.activities;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.IOException;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import me.arkanayan.buieconnect.BuildConfig;
 import me.arkanayan.buieconnect.R;
 import me.arkanayan.buieconnect.exceptions.UserDetailsNotPresent;
@@ -24,10 +29,20 @@ public class EditUserActivity extends AppCompatActivity {
 
     public static final String EXTRA_AUTH_TOKEN = BuildConfig.APPLICATION_ID + ".extra_auth_token";
     private User mUser;
+
+    @Bind(R.id.first_name_edit_text)
+    TextInputEditText firstNameEditText;
+
+    @Bind(R.id.layout_input_first_name)
+    TextInputLayout firstNameInputLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user);
+        ButterKnife.bind(this);
+
+        // [ Start user loading/handling ]
 
         Prefs prefs = Prefs.getInstance(this);
         boolean isUserDetailsPresent = prefs.getBoolean(Prefs.Key.IS_USER_DETAILS_PRESENT);
@@ -92,6 +107,9 @@ public class EditUserActivity extends AppCompatActivity {
                     finish();
                 }
             }
+
+        // [ End user handling ]
+
     }
 
 
@@ -101,5 +119,10 @@ public class EditUserActivity extends AppCompatActivity {
         editUserIntent.putExtra(EXTRA_AUTH_TOKEN, authToken);
 
         return editUserIntent;
+    }
+
+    public static Intent getEditUserIntent(Context context) {
+
+        return new Intent(context, EditUserActivity.class);
     }
 }
