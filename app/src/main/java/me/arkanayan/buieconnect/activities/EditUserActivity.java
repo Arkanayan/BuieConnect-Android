@@ -21,6 +21,7 @@ import com.mobsandgeeks.saripaar.annotation.Email;
 import com.mobsandgeeks.saripaar.annotation.Max;
 import com.mobsandgeeks.saripaar.annotation.Min;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
+import com.mobsandgeeks.saripaar.annotation.Optional;
 
 import java.io.IOException;
 import java.util.List;
@@ -73,7 +74,7 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
     @Bind(R.id.edit_text_admission_year)
     TextInputEditText admissionYearEditText;
 
-    @NotEmpty
+    @Optional
     @Bind(R.id.edit_text_univ_roll)
     TextInputEditText univRollEditText;
 
@@ -86,6 +87,7 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         editUserBinding = DataBindingUtil.setContentView(this, R.layout.activity_edit_user);
+
         ActionBar toolbar = getSupportActionBar();
 
         // set click listeners
@@ -189,9 +191,10 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.button_submit:
                 mEditUserValidator.validate();
-                Log.d(TAG, "onClick submit: firstName " + editUserBinding.firstNameEditText.getText());
+                Log.d(TAG, "onClick submit: firstName " + firstNameEditText.getText());
                 Log.d(TAG, "onClick submit: is_alumus " + editUserBinding.switchAlumnus.isChecked());
                 Log.d(TAG, "onClick submit: department " + editUserBinding.spinnerDepartment.getSelectedItem().toString());
+                Log.d(TAG, "onClick submit: univ Roll:  " + editUserBinding.editTextUnivRoll.getText());
 
         }
     }
@@ -199,6 +202,8 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onValidationSucceeded() {
         Log.d(TAG, "onValidationSucceeded: Validation Succeed");
+        //todo handle user edit here
+
     }
 
     @Override
@@ -209,7 +214,12 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
 
             // Display error messages ;)
             if (view instanceof EditText) {
-                ((EditText) view).setError(message);
+                if (view.getParent() instanceof TextInputLayout){
+                    ((TextInputLayout) view.getParent()).setError(message);
+                }
+                else {
+                    ((EditText) view).setError(message);
+                }
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
