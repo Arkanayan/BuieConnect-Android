@@ -3,7 +3,9 @@ package me.arkanayan.buieconnect.activities;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,11 +41,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Bind(R.id.sign_in_button) SignInButton signInButton;
     private GoogleApiClient mGoogleApiClient;
 
+    private Prefs mPrefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        mPrefs = Prefs.getInstance(this);
 
         Log.v(TAG, "app id: " + getString(R.string.server_client_id));
 
@@ -94,14 +100,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.d(TAG, "handleSignInResult: Name: " + acct.getDisplayName());
             Log.d(TAG, "handleSignInResult: idToken: " + acct.getIdToken());
 
-            Call<AuthResponse> responseCall = loginService.getLoginCall(acct.getIdToken());
+            Call<AuthResponse> loginCall = loginService.getLoginCall(acct.getIdToken());
 
             final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
             progressDialog.setIndeterminate(true);
             progressDialog.setMessage("Authenticating...");
             progressDialog.show();
 
-            responseCall.enqueue(new Callback<AuthResponse>() {
+            loginCall.enqueue(new Callback<AuthResponse>() {
                 @Override
                 public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                     progressDialog.dismiss();
@@ -111,12 +117,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Log.d(TAG, "onResponse: authtoken: " + authResponse.getAuthToken());
 
                         // Update shared preferences
-                        Prefs.getInstance(LoginActivity.this).put(Prefs.Key.AUTH_TOKEN, authResponse.getAuthToken());
-                        Prefs.getInstance().put(Prefs.Key.IS_LOGGED_IN, true);
+                        // Prefs.getInstance(LoginActivity.this).put(Prefs.Key.AUTH_TOKEN, authResponse.getAuthToken());
+                        // Prefs.getInstance().put(Prefs.Key.IS_LOGGED_IN, true);
+                        boolean isUserDetailsPresent = mPrefs.getBoolean(Prefs.Key.IS_USER_DETAILS_PRESENT);
 
-                        if (authResponse.getFirstTime()) {
-                            Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
+                        if (!isUserDetailsPresent) {
+                           // Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
                             // todo launch edit user activity here
+                            Intent editUserIntent = EditUserActivity.getEditUserIntent(LoginActivity.this, authResponse.getAuthToken());
+                            startActivity(editUserIntent);
+
                         } else {
                             Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(mainActivity);
@@ -127,12 +137,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         try {
                             RestError error = RestError.getErrorObj(response.errorBody());
                             Log.d(TAG, "onResponse: Errorbody: " + error.getMessage());
-                            Toast.makeText(LoginActivity.this, "Error, " + error.getMessage() , Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(LoginActivity.this, "Error, " + error.getMessage() , Toast.LENGTH_SHORT).show();
+                            showLoginFailedAndRetry(error.getMessage());
                         } catch (IOException e) {
                             e.printStackTrace();
+                            showLoginFailedAndRetry();
+
                         }
 
-                        Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
 
                     }
                 }
@@ -140,12 +153,40 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void onFailure(Call<AuthResponse> call, Throwable t) {
                     progressDialog.dismiss();
-                    Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
+                    showLoginFailedAndRetry();
 
                 }
             });
 
+        } else {
+            showLoginFailedAndRetry();
+
         }
+    }
+
+    private void showLoginFailedAndRetry() {
+        Snackbar.make(signInButton, "Sorry, Login failed" , Snackbar.LENGTH_SHORT)
+                .setActionTextColor(Color.CYAN)
+                .setAction("Retry", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        signIn();
+                    }
+                })
+                .show();
+    }
+
+    private void showLoginFailedAndRetry(String errorMessage) {
+        Snackbar.make(signInButton, errorMessage , Snackbar.LENGTH_SHORT)
+                .setActionTextColor(Color.CYAN)
+                .setAction("Retry", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        signIn();
+                    }
+                })
+                .show();
     }
 
     @Override

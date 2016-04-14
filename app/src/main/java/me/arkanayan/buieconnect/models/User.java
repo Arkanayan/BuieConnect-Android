@@ -2,6 +2,8 @@ package me.arkanayan.buieconnect.models;
 
 import android.app.Presentation;
 import android.content.Context;
+import android.databinding.Bindable;
+import android.databinding.BindingAdapter;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
@@ -26,9 +28,9 @@ public class User {
     @SerializedName("firstName")
     @Expose
     private String firstName;
-    @SerializedName("reg_date")
+/*    @SerializedName("reg_date")
     @Expose
-    private Date regDate;
+    private Date regDate;*/
     @SerializedName("is_admin")
     @Expose
     private Boolean isAdmin;
@@ -71,9 +73,13 @@ public class User {
      * @return
      * The isAlumnus
      */
-    public Boolean getIsAlumnus() {
-        return isAlumnus;
+    public String getIsAlumnus() {
+        return isAlumnus ? "true" : "false";
     }
+
+/*    public boolean getIsAlumnus() {
+        return isAlumnus;
+    }*/
 
     /**
      *
@@ -120,23 +126,29 @@ public class User {
         this.firstName = firstName;
     }
 
-    /**
+/*
+    */
+/**
      *
      * @return
      * The regDate
-     */
+     *//*
+
     public Date getRegDate() {
         return regDate;
     }
 
-    /**
+    */
+/**
      *
      * @param regDate
      * The reg_date
-     */
+     *//*
+
     public void setRegDate(Date regDate) {
         this.regDate = regDate;
     }
+*/
 
     /**
      *
@@ -251,7 +263,7 @@ public class User {
      * @return
      * The univRoll
      */
-    public Object getUnivRoll() {
+    public long getUnivRoll() {
         return univRoll;
     }
 
@@ -269,7 +281,7 @@ public class User {
      * @return
      * The passoutYear
      */
-    public Object getPassoutYear() {
+    public int getPassoutYear() {
         return passoutYear;
     }
 
@@ -287,7 +299,7 @@ public class User {
      * @return
      * The gcmRegId
      */
-    public Object getGcmRegId() {
+    public String getGcmRegId() {
         return gcmRegId;
     }
 

@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
+import com.facebook.stetho.Stetho;
 
 import io.fabric.sdk.android.Fabric;
 import me.arkanayan.buieconnect.R;
@@ -28,10 +29,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Stetho.initializeWithDefaults(this);
         Fabric.with(this, new Crashlytics());
         // Launches MainActivity if user is logged in else launches login activity
         boolean isLoggedIn = Prefs.getInstance(this).getBoolean(Prefs.Key.IS_LOGGED_IN);
-        if (!isLoggedIn) {
+        boolean isUserDetailsPresent = Prefs.getInstance().getBoolean(Prefs.Key.IS_USER_DETAILS_PRESENT);
+
+        if (!isLoggedIn && !isUserDetailsPresent) {
             Intent loginIntent = new Intent(this, LoginActivity.class);
             startActivity(loginIntent);
             finish();

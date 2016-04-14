@@ -11,14 +11,18 @@ import retrofit2.Call;
 public class UserService {
     private final String TAG = this.getClass().getSimpleName();
 
-    private UserInterface user;
+    private UserInterface mUser;
 
     public UserService(String authToken) {
-        user = ServiceGenerator.createService(UserInterface.class, authToken);
+        mUser = ServiceGenerator.createService(UserInterface.class, authToken);
     }
 
     public Call<User> getUserCall() {
 
-        return user.getUser();
+        return mUser.getUser();
+    }
+
+    public Call<User> updateUser(User user) {
+        return mUser.updateUser(user);
     }
 }
