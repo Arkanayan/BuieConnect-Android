@@ -34,7 +34,7 @@
             android:name="io.fabric.ApiKey"
             android:value="644034b6656fd827bb93e481bc1e62f6f0708cf5" />
 
-        <activity android:name=".activities.EditUserActivity"></activity>
+        <activity android:name=".activities.EditUserActivity" android:parentActivityName=".activities.MainActivity"></activity>
     </application>
 
 </manifest>

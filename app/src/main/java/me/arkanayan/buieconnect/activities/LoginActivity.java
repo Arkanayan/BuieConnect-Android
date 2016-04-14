@@ -51,6 +51,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         mPrefs = Prefs.getInstance(this);
 
+        if (mPrefs.getBoolean(Prefs.Key.IS_LOGGED_IN) && mPrefs.getBoolean(Prefs.Key.IS_USER_DETAILS_PRESENT)) {
+            startActivity(MainActivity.getIntent(this));
+            finish();
+        }
+
         Log.v(TAG, "app id: " + getString(R.string.server_client_id));
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -126,6 +131,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             // todo launch edit user activity here
                             Intent editUserIntent = EditUserActivity.getEditUserIntent(LoginActivity.this, authResponse.getAuthToken());
                             startActivity(editUserIntent);
+                            finish();
 
                         } else {
                             Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);

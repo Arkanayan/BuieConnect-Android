@@ -191,7 +191,7 @@ public class User {
      * @return
      * The admissionYear
      */
-    public Object getAdmissionYear() {
+    public int getAdmissionYear() {
         return admissionYear;
     }
 
@@ -227,7 +227,7 @@ public class User {
      * @return
      * The currentSemester
      */
-    public Object getCurrentSemester() {
+    public int getCurrentSemester() {
         return currentSemester;
     }
 
@@ -407,6 +407,7 @@ public class User {
         String json = gson.toJson(user);
         prefs.put(Prefs.Key.USER, json);
         prefs.put(Prefs.Key.IS_USER_DETAILS_PRESENT, true);
+        prefs.put(Prefs.Key.IS_LOGGED_IN, true);
     }
 
 }

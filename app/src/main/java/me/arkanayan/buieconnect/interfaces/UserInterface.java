@@ -1,6 +1,7 @@
 package me.arkanayan.buieconnect.interfaces;
 
 import me.arkanayan.buieconnect.models.User;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -15,5 +16,5 @@ public interface UserInterface {
     Call<User> getUser();
 
     @PUT("user")
-    Call<User> updateUser(@Body User user);
+    Call<User> updateUser(@Body RequestBody user);
 }

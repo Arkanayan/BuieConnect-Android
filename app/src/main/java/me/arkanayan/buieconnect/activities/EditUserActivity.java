@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
@@ -36,6 +38,8 @@ import me.arkanayan.buieconnect.models.RestError;
 import me.arkanayan.buieconnect.models.User;
 import me.arkanayan.buieconnect.services.UserService;
 import me.arkanayan.buieconnect.utils.Prefs;
+import me.arkanayan.buieconnect.utils.Utils;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -82,6 +86,11 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
     TextInputLayout firstNameInputLayout;
     // [End view bindings]
     private EditUserBinding editUserBinding;
+    private Prefs mPref;
+    private String mAuthToken;
+    private UserService mUserService;
+
+    private boolean mFirsTimeEdit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +98,8 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
         editUserBinding = DataBindingUtil.setContentView(this, R.layout.activity_edit_user);
 
         ActionBar toolbar = getSupportActionBar();
+        toolbar.setDisplayHomeAsUpEnabled(true);
+        toolbar.setTitle("Edit your details");
 
         // set click listeners
         editUserBinding.buttonSubmit.setOnClickListener(this);
@@ -99,18 +110,23 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
         mEditUserValidator = new Validator(this);
         mEditUserValidator.setValidationListener(this);
         // [ Start user loading/handling ]
+        mPref = Prefs.getInstance(this);
+        // Initialize user service
 
-        Prefs prefs = Prefs.getInstance(this);
-        boolean isUserDetailsPresent = prefs.getBoolean(Prefs.Key.IS_USER_DETAILS_PRESENT);
+
+        boolean isUserDetailsPresent = mPref.getBoolean(Prefs.Key.IS_USER_DETAILS_PRESENT);
 
         Intent intent = getIntent();
 
         if (intent.hasExtra(EXTRA_AUTH_TOKEN)) {
+            mFirsTimeEdit = true;
             //fetch user from auth token here and populate fields
-            String authToken = intent.getStringExtra(EXTRA_AUTH_TOKEN);
+            mAuthToken = intent.getStringExtra(EXTRA_AUTH_TOKEN);
+            mPref.put(Prefs.Key.AUTH_TOKEN, mAuthToken);
 
-            UserService userService = new UserService(authToken);
-            Call<User> getUserCall = userService.getUserCall();
+            mUserService = new UserService(mAuthToken);
+
+            Call<User> getUserCall = mUserService.getUserCall();
 
             final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
             progressDialog.setIndeterminate(true);
@@ -155,11 +171,14 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
 
         } else if (isUserDetailsPresent){
                 try {
+                    mAuthToken = mPref.getString(Prefs.Key.AUTH_TOKEN);
+                    mPref.put(Prefs.Key.AUTH_TOKEN, mAuthToken);
+                    mUserService = new UserService(mAuthToken);
                     mUser = User.loadUserFromPreference(this);
                     editUserBinding.setUser(mUser);
                 } catch (UserDetailsNotPresent userDetailsNotPresent) {
                     userDetailsNotPresent.printStackTrace();
-                    prefs.put(Prefs.Key.IS_USER_DETAILS_PRESENT, false);
+                    mPref.put(Prefs.Key.IS_USER_DETAILS_PRESENT, false);
                     Toast.makeText(EditUserActivity.this, "User not present", Toast.LENGTH_SHORT).show();
                     // Start login activity
                     Intent loginIntent = LoginActivity.getLoginIntent(this);
@@ -172,6 +191,15 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (mFirsTimeEdit) {
+            Intent mainActivity = new Intent(this, MainActivity.class);
+            startActivity(mainActivity);
+            finish();
+        }
+    }
 
     public static Intent getEditUserIntent(Context context, String authToken) {
 
@@ -191,10 +219,10 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.button_submit:
                 mEditUserValidator.validate();
-                Log.d(TAG, "onClick submit: firstName " + firstNameEditText.getText());
+/*                Log.d(TAG, "onClick submit: firstName " + firstNameEditText.getText());
                 Log.d(TAG, "onClick submit: is_alumus " + editUserBinding.switchAlumnus.isChecked());
                 Log.d(TAG, "onClick submit: department " + editUserBinding.spinnerDepartment.getSelectedItem().toString());
-                Log.d(TAG, "onClick submit: univ Roll:  " + editUserBinding.editTextUnivRoll.getText());
+                Log.d(TAG, "onClick submit: univ Roll:  " + editUserBinding.editTextUnivRoll.getText());*/
 
         }
     }
@@ -203,7 +231,73 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
     public void onValidationSucceeded() {
         Log.d(TAG, "onValidationSucceeded: Validation Succeed");
         //todo handle user edit here
+        String firstName = firstNameEditText.getText().toString().trim();
+        String lastName = lastNameEditText.getText().toString().trim();
+        String email = emailEditText.getText().toString().trim();
+        Long univRoll = univRollEditText.getText().toString().equals("") ? 0 : Long.parseLong(univRollEditText.getText().toString());
+        int admissionYear = Integer.parseInt(admissionYearEditText.getText().toString().trim());
+        int passoutYear = Integer.parseInt(passoutYearEditText.getText().toString().trim());
+        boolean isAlumnus = editUserBinding.switchAlumnus.isChecked();
+        String deptName =  editUserBinding.spinnerDepartment.getSelectedItem().toString().trim();
+        int currentSemester = Integer.parseInt(editUserBinding.spinnerSemester.getSelectedItem().toString());
 
+
+        mUser.setFirstName(firstName);
+        mUser.setLastName(lastName);
+        mUser.setEmail(email);
+        mUser.setUnivRoll(univRoll);
+        mUser.setAdmissionYear(admissionYear);
+        mUser.setPassoutYear(passoutYear);
+        mUser.setIsAlumnus(isAlumnus);
+        mUser.setDepartmentName(deptName);
+        mUser.setCurrentSemester(currentSemester);
+
+        //todo get and set gcm reg token here
+
+        RequestBody userRequestBody = Utils.getRequestBodyFromModel(mUser);
+        Call<User> updateUserCall = mUserService.updateUser(userRequestBody);
+
+        final ProgressDialog userEditProgressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
+        userEditProgressDialog.setIndeterminate(true);
+        userEditProgressDialog.setMessage("Saving new details...");
+        userEditProgressDialog.show();
+
+        updateUserCall.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                userEditProgressDialog.dismiss();
+
+                if (response.isSuccessful()) {
+                    User.storeUser(EditUserActivity.this, mUser);
+                    Toast.makeText(EditUserActivity.this, "Update Successful", Toast.LENGTH_SHORT).show();
+                } else {
+                    try {
+                        RestError error = RestError.getErrorObj(response.errorBody());
+                        showErrorAndRetry("Error, " + error.getMessage());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                userEditProgressDialog.dismiss();
+                Log.d(TAG, "onFailure: User update: " + t.getCause());
+                showErrorAndRetry("Sorry, failed to update ");
+            }
+        });
+    }
+
+    private void showErrorAndRetry(String errorMessage) {
+        Snackbar.make(editUserBinding.scrollView, errorMessage, Snackbar.LENGTH_LONG)
+                .setActionTextColor(Color.CYAN)
+                .setAction("Retry", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mEditUserValidator.validate();
+                    }
+                }).show();
     }
 
     @Override
@@ -214,12 +308,12 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
 
             // Display error messages ;)
             if (view instanceof EditText) {
-                if (view.getParent() instanceof TextInputLayout){
+/*                if (view.getParent() instanceof TextInputLayout){
                     ((TextInputLayout) view.getParent()).setError(message);
                 }
-                else {
+                else {*/
                     ((EditText) view).setError(message);
-                }
+                // }
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }

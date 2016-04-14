@@ -3,6 +3,7 @@ package me.arkanayan.buieconnect.services;
 import me.arkanayan.buieconnect.ServiceGenerator;
 import me.arkanayan.buieconnect.interfaces.UserInterface;
 import me.arkanayan.buieconnect.models.User;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 
 /**
@@ -22,7 +23,7 @@ public class UserService {
         return mUser.getUser();
     }
 
-    public Call<User> updateUser(User user) {
+    public Call<User> updateUser(RequestBody user) {
         return mUser.updateUser(user);
     }
 }
