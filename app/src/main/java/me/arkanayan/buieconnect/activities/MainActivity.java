@@ -3,6 +3,7 @@ package me.arkanayan.buieconnect.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -14,18 +15,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.facebook.stetho.Stetho;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
 import me.arkanayan.buieconnect.R;
+import me.arkanayan.buieconnect.exceptions.UserDetailsNotPresent;
+import me.arkanayan.buieconnect.models.User;
 import me.arkanayan.buieconnect.utils.Prefs;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+/*    @Bind(R.id.text_view_header_name)
+    TextView headerName;
+
+    @Bind(R.id.text_view_header_email)
+    TextView headerEmail;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +55,17 @@ public class MainActivity extends AppCompatActivity
         }
 
         setContentView(R.layout.activity_main);
+//        ButterKnife.bind(this);
+
+        // Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // analytics
         Answers.getInstance().logContentView(new ContentViewEvent()
             .putContentName("Main Screen")
             .putContentType("Screen")
             .putContentId("screen-main"));
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -63,6 +77,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        // Navigation Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -71,6 +86,18 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerview = navigationView.getHeaderView(0);
+
+        TextView headerEmail = (TextView) headerview.findViewById(R.id.text_view_header_email);
+        TextView headerName = (TextView) headerview.findViewById(R.id.text_view_header_name);
+        try {
+            User user = User.loadUserFromPreference(this);
+            headerName.setText(String.format(getString(R.string.full_name), user.getFirstName(), user.getLastName()));
+            headerEmail.setText(user.getEmail());
+        } catch (UserDetailsNotPresent userDetailsNotPresent) {
+            userDetailsNotPresent.printStackTrace();
+        }
+
     }
 
 
@@ -99,9 +126,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -113,21 +140,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_edit_user) {
-            startActivity(EditUserActivity.getEditUserIntent(this));
-        } else if (id == R.id.nav_gallery) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(EditUserActivity.getEditUserIntent(MainActivity.this));
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+                }
+            }, 200);
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 

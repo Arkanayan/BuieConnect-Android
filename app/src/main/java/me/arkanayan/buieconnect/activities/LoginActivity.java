@@ -12,6 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+import com.crashlytics.android.answers.LoginEvent;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -55,6 +58,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             startActivity(MainActivity.getIntent(this));
             finish();
         }
+
+        // analytics
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Login Screen")
+                .putContentType("Screen")
+                .putContentId("screen-login"));
 
         Log.v(TAG, "app id: " + getString(R.string.server_client_id));
 
@@ -127,6 +136,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         boolean isUserDetailsPresent = mPrefs.getBoolean(Prefs.Key.IS_USER_DETAILS_PRESENT);
 
                         if (!isUserDetailsPresent) {
+                            // Analytics login count
+                            Answers.getInstance().logLogin(new LoginEvent()
+                                    .putMethod("Google Sign In")
+                                    .putSuccess(true));
                            // Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
                             // todo launch edit user activity here
                             Intent editUserIntent = EditUserActivity.getEditUserIntent(LoginActivity.this, authResponse.getAuthToken());

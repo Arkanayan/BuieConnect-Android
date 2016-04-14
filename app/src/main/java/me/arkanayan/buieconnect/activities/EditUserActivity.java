@@ -13,10 +13,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+import com.crashlytics.android.answers.CustomEvent;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.Email;
@@ -44,7 +49,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class EditUserActivity extends AppCompatActivity implements View.OnClickListener, Validator.ValidationListener {
+public class EditUserActivity extends AppCompatActivity implements Validator.ValidationListener {
 
     public final String TAG = this.getClass().getSimpleName();
 
@@ -102,9 +107,15 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
         toolbar.setTitle("Edit your details");
 
         // set click listeners
-        editUserBinding.buttonSubmit.setOnClickListener(this);
+       //   editUserBinding.buttonSubmit.setOnClickListener(this);
         //setContentView(R.layout.activity_edit_user);
         ButterKnife.bind(this);
+
+        // analytics
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Edit User Screen")
+                .putContentType("Screen")
+                .putContentId("screen-edit-user"));
 
         // Instantiate validator
         mEditUserValidator = new Validator(this);
@@ -141,13 +152,22 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
                     mUser = response.body();
 
                     if (mUser != null && response.isSuccessful()) {
-                        //todo bind user to views
+
                         editUserBinding.setUser(mUser);
+                        // Analytics
+                        Answers.getInstance().logCustom(new CustomEvent("User Retrived")
+                                .putCustomAttribute("Status", "Success")
+                                .putCustomAttribute("Cause", "Login"));
                     } else {
                         try {
                             // show error message
                             RestError restError = RestError.getErrorObj(response.errorBody());
                             Toast.makeText(EditUserActivity.this, restError.getMessage(), Toast.LENGTH_SHORT).show();
+                            // Analytics
+                            Answers.getInstance().logCustom(new CustomEvent("User Retrived")
+                                    .putCustomAttribute("Status", "Failed")
+                                    .putCustomAttribute("Cause", restError.getMessage()));
+
                         } catch (IOException e) {
                             e.printStackTrace();
                             Log.d(TAG, "onResponse:failed: " + e.toString());
@@ -164,7 +184,10 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
                     progressDialog.dismiss();
                     t.printStackTrace();
                     Toast.makeText(EditUserActivity.this, "Sorry, can't fetch data", Toast.LENGTH_SHORT).show();
-
+                    // Analytics
+                    Answers.getInstance().logCustom(new CustomEvent("User Retrived")
+                            .putCustomAttribute("Status", "Failed")
+                            .putCustomAttribute("Cause", t.getMessage()));
                 }
             });
 
@@ -214,18 +237,22 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
         return new Intent(context, EditUserActivity.class);
     }
 
+/*
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_submit:
                 mEditUserValidator.validate();
+*/
 /*                Log.d(TAG, "onClick submit: firstName " + firstNameEditText.getText());
                 Log.d(TAG, "onClick submit: is_alumus " + editUserBinding.switchAlumnus.isChecked());
                 Log.d(TAG, "onClick submit: department " + editUserBinding.spinnerDepartment.getSelectedItem().toString());
-                Log.d(TAG, "onClick submit: univ Roll:  " + editUserBinding.editTextUnivRoll.getText());*/
+                Log.d(TAG, "onClick submit: univ Roll:  " + editUserBinding.editTextUnivRoll.getText());*//*
+
 
         }
     }
+*/
 
     @Override
     public void onValidationSucceeded() {
@@ -270,10 +297,20 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
                 if (response.isSuccessful()) {
                     User.storeUser(EditUserActivity.this, mUser);
                     Toast.makeText(EditUserActivity.this, "Update Successful", Toast.LENGTH_SHORT).show();
+                    // Analytics
+                    Answers.getInstance().logCustom(new CustomEvent("User Edit")
+                                        .putCustomAttribute("Edit status", "Success"));
                 } else {
                     try {
+
                         RestError error = RestError.getErrorObj(response.errorBody());
                         showErrorAndRetry("Error, " + error.getMessage());
+
+                        // Analytics
+                        Answers.getInstance().logCustom(new CustomEvent("User Edit")
+                                .putCustomAttribute("Edit status", "Failed")
+                                .putCustomAttribute("Cause", error.getMessage()));
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -284,9 +321,29 @@ public class EditUserActivity extends AppCompatActivity implements View.OnClickL
             public void onFailure(Call<User> call, Throwable t) {
                 userEditProgressDialog.dismiss();
                 Log.d(TAG, "onFailure: User update: " + t.getCause());
+                // Analytics
+                Answers.getInstance().logCustom(new CustomEvent("User Edit")
+                        .putCustomAttribute("Edit status", "Failed")
+                        .putCustomAttribute("Cause", t.getMessage()));
+
                 showErrorAndRetry("Sorry, failed to update ");
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+         getMenuInflater().inflate(R.menu.edit_user_menu, menu);
+         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                mEditUserValidator.validate();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void showErrorAndRetry(String errorMessage) {
