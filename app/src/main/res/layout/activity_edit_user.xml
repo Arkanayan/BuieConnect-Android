@@ -83,7 +83,7 @@
         android:inputType="textPersonName"
         android:ems="10"
         android:text="@{user.lastName}"
-        android:id="@+id/editText2"
+        android:id="@+id/edit_text_last_name"
         android:hint="Last Name" />
     </android.support.design.widget.TextInputLayout>
 
@@ -96,7 +96,7 @@
         android:inputType="textEmailAddress"
         android:ems="10"
         android:text="@{user.email}"
-        android:id="@+id/editText3"
+        android:id="@+id/edit_text_email"
         android:hint="Email" />
 
     </android.support.design.widget.TextInputLayout>
@@ -110,7 +110,7 @@
             android:inputType="numberSigned"
             android:ems="10"
             android:text="@{String.valueOf(user.univRoll)}"
-            android:id="@+id/editText6"
+            android:id="@+id/edit_text_univ_roll"
             android:hint="University Roll" />
     </android.support.design.widget.TextInputLayout>
 
