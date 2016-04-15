@@ -23,7 +23,6 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.crashlytics.android.core.CrashlyticsCore;
-import com.facebook.stetho.Stetho;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Stetho.initializeWithDefaults(this);
 
         // Crashlytics initialize
         Crashlytics crashlyticsKit = new Crashlytics.Builder()

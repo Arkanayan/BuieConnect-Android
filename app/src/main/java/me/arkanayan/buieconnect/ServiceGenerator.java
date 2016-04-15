@@ -1,7 +1,6 @@
 package me.arkanayan.buieconnect;
 
-import com.facebook.stetho.Stetho;
-import com.facebook.stetho.okhttp3.StethoInterceptor;
+
 
 import java.io.IOException;
 
@@ -19,8 +18,7 @@ public class ServiceGenerator {
     //TODO change main url here
     public static final String API_BASE_URL = "http://buieconnect.arkanayan.me/api/v1/";
 
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
-            .addNetworkInterceptor(new StethoInterceptor());
+    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
 
     private static Retrofit.Builder builder =
