@@ -34,12 +34,20 @@ android {
         enabled = true
     }
     buildTypes {
+        debug {
+            ext.enableCrashlytics = false
+            minifyEnabled true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     productFlavors {
+    }
+
+    dexOptions {
+        javaMaxHeapSize "1g"
     }
 }
 

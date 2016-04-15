@@ -49,7 +49,7 @@ public class UserOperationsTest extends ActivityInstrumentationTestCase2<MainAct
         mUser.setLastName("TestLastName");
         mUser.setPassoutYear(2016);
         mUser.setAdmissionYear(2016);
-        mUser.setRegDate(new Date());
+       // mUser.setRegDate(new Date());
         mUser.setIsAdmin(true);
         mUser.setVerified(false);
         mUser.setId(2);

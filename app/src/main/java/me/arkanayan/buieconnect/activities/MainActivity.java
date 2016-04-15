@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,11 +21,13 @@ import android.widget.TextView;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.facebook.stetho.Stetho;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
+import me.arkanayan.buieconnect.BuildConfig;
 import me.arkanayan.buieconnect.R;
 import me.arkanayan.buieconnect.exceptions.UserDetailsNotPresent;
 import me.arkanayan.buieconnect.models.User;
@@ -43,7 +46,14 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Stetho.initializeWithDefaults(this);
-        Fabric.with(this, new Crashlytics());
+
+        // Crashlytics initialize
+        Crashlytics crashlyticsKit = new Crashlytics.Builder()
+                .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                .build();
+
+        Fabric.with(this, crashlyticsKit);
+
         // Launches MainActivity if user is logged in else launches login activity
         boolean isLoggedIn = Prefs.getInstance(this).getBoolean(Prefs.Key.IS_LOGGED_IN);
         boolean isUserDetailsPresent = Prefs.getInstance().getBoolean(Prefs.Key.IS_USER_DETAILS_PRESENT);
