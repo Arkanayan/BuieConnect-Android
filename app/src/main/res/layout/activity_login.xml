@@ -8,8 +8,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    android:backgroundTint="@color/primary_darker"
-    android:background="@color/primary_darker"
+    android:backgroundTint="@color/colorPrimary"
+    android:background="@color/colorPrimary"
     tools:context=".activities.LoginActivity">
 
     <com.google.android.gms.common.SignInButton

@@ -97,6 +97,7 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
 
     private boolean mFirsTimeEdit = false;
 
+    ProgressDialog mProgressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,12 +125,16 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
         mPref = Prefs.getInstance(this);
         // Initialize user service
 
+        mProgressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
+
 
         boolean isUserDetailsPresent = mPref.getBoolean(Prefs.Key.IS_USER_DETAILS_PRESENT);
 
         Intent intent = getIntent();
 
         if (intent.hasExtra(EXTRA_AUTH_TOKEN)) {
+
+            toolbar.setDisplayHomeAsUpEnabled(false);
             mFirsTimeEdit = true;
             //fetch user from auth token here and populate fields
             mAuthToken = intent.getStringExtra(EXTRA_AUTH_TOKEN);
@@ -139,20 +144,20 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
 
             Call<User> getUserCall = mUserService.getUserCall();
 
-            final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setMessage("Loading your details...");
-            progressDialog.show();
+            // final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setMessage("Loading your details...");
+            mProgressDialog.show();
 
             // Load user from network
             getUserCall.enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
-                    progressDialog.dismiss();
+                    mProgressDialog.dismiss();
                     mUser = response.body();
 
                     if (mUser != null && response.isSuccessful()) {
-
+                        Log.d(TAG, "onResponse: Reg Date: " + mUser.getRegDate().toString());
                         editUserBinding.setUser(mUser);
                         // Analytics
                         Answers.getInstance().logCustom(new CustomEvent("User Retrived")
@@ -181,7 +186,7 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
-                    progressDialog.dismiss();
+                    mProgressDialog.dismiss();
                     t.printStackTrace();
                     Toast.makeText(EditUserActivity.this, "Sorry, can't fetch data", Toast.LENGTH_SHORT).show();
                     // Analytics
@@ -284,15 +289,15 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
         RequestBody userRequestBody = Utils.getRequestBodyFromModel(mUser);
         Call<User> updateUserCall = mUserService.updateUser(userRequestBody);
 
-        final ProgressDialog userEditProgressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
-        userEditProgressDialog.setIndeterminate(true);
-        userEditProgressDialog.setMessage("Saving new details...");
-        userEditProgressDialog.show();
+        //final ProgressDialog userEditProgressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setMessage("Saving new details...");
+        mProgressDialog.show();
 
         updateUserCall.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                userEditProgressDialog.dismiss();
+                mProgressDialog.dismiss();
 
                 if (response.isSuccessful()) {
                     User.storeUser(EditUserActivity.this, mUser);
@@ -319,7 +324,7 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                userEditProgressDialog.dismiss();
+                mProgressDialog.dismiss();
                 Log.d(TAG, "onFailure: User update: " + t.getCause());
                 // Analytics
                 Answers.getInstance().logCustom(new CustomEvent("User Edit")
@@ -329,6 +334,12 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
                 showErrorAndRetry("Sorry, failed to update ");
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mProgressDialog.dismiss();
     }
 
     @Override

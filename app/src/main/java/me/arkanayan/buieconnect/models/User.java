@@ -28,9 +28,9 @@ public class User {
     @SerializedName("firstName")
     @Expose
     private String firstName;
-/*    @SerializedName("reg_date")
+    @SerializedName("reg_date")
     @Expose
-    private Date regDate;*/
+    private Date regDate;
     @SerializedName("is_admin")
     @Expose
     private Boolean isAdmin;
@@ -126,29 +126,24 @@ public class User {
         this.firstName = firstName;
     }
 
-/*
-    */
 /**
      *
      * @return
      * The regDate
-     *//*
+     */
 
     public Date getRegDate() {
         return regDate;
     }
 
-    */
-/**
+    /*
      *
      * @param regDate
      * The reg_date
-     *//*
-
+     */
     public void setRegDate(Date regDate) {
         this.regDate = regDate;
     }
-*/
 
     /**
      *
