@@ -3,12 +3,16 @@ package me.arkanayan.buieconnect.adapters;
 import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.common.primitives.Chars;
+
+import in.uncod.android.bypass.Bypass;
 import me.arkanayan.buieconnect.R;
 import me.arkanayan.buieconnect.activities.NoticesFragment.OnListFragmentInteractionListener;
 import me.arkanayan.buieconnect.models.Notice;
@@ -26,6 +30,8 @@ public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.ViewHold
     private final List<Notice> mValues;
     private final OnListFragmentInteractionListener mListener;
 
+    private Bypass mBypass;
+
     public NoticesAdapter(List<Notice> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
@@ -35,14 +41,23 @@ public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.ViewHold
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_notices, parent, false);
+        mBypass = new Bypass(parent.getContext());
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mTitleView.setText(mValues.get(position).getTitle());
-        holder.mMessageView.setText(mValues.get(position).getMessage());
+
+        String markdownString = mValues.get(position).getTitle();
+        CharSequence string = mBypass.markdownToSpannable(markdownString);
+        holder.mTitleView.setText(string);
+        holder.mTitleView.setMovementMethod(LinkMovementMethod.getInstance());
+
+        String messageMarkdownString = mValues.get(position).getMessage();
+        CharSequence messageString = mBypass.markdownToSpannable(messageMarkdownString);
+        holder.mMessageView.setText(messageString);
+        holder.mMessageView.setMovementMethod(LinkMovementMethod.getInstance());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

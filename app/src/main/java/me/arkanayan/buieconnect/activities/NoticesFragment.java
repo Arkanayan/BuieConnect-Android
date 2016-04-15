@@ -75,8 +75,8 @@ public class NoticesFragment extends Fragment {
             List<Notice> notices = new ArrayList<Notice>();
             for (int i = 0 ; i < 10; i++) {
                 Notice tempNotice = new Notice();
-                tempNotice.setTitle("This is title " + i);
-                tempNotice.setMessage("This is message " + i);
+                tempNotice.setTitle("## This is title* " + i);
+                tempNotice.setMessage("*This is message " + i + "*");
                 notices.add(tempNotice);
             }
             recyclerView.setAdapter(new NoticesAdapter(notices, mListener));
