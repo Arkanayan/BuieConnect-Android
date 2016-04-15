@@ -3,7 +3,7 @@ package me.arkanayan.buieconnect.services;
 import java.util.List;
 
 import me.arkanayan.buieconnect.ServiceGenerator;
-import me.arkanayan.buieconnect.interfaces.NoticesInterface;
+import me.arkanayan.buieconnect.apis.NoticesApi;
 import me.arkanayan.buieconnect.models.Notice;
 import retrofit2.Call;
 
@@ -14,10 +14,10 @@ public class NoticeService {
 
     public String TAG = this.getClass().getSimpleName();
 
-    private NoticesInterface noticeApi;
+    private NoticesApi noticeApi;
 
     public NoticeService() {
-        this.noticeApi = ServiceGenerator.createService(NoticesInterface.class);
+        this.noticeApi = ServiceGenerator.createService(NoticesApi.class);
     }
 
     public Call<List<Notice>> getNoticesCall() {

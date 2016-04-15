@@ -1,4 +1,4 @@
-package me.arkanayan.buieconnect.interfaces;
+package me.arkanayan.buieconnect.apis;
 
 import me.arkanayan.buieconnect.models.User;
 import okhttp3.RequestBody;
@@ -10,7 +10,7 @@ import retrofit2.http.PUT;
 /**
  * Created by arka on 4/10/16.
  */
-public interface UserInterface {
+public interface UserApi {
 
     @GET("user")
     Call<User> getUser();

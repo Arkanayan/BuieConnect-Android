@@ -1,4 +1,4 @@
-package me.arkanayan.buieconnect.interfaces;
+package me.arkanayan.buieconnect.apis;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import retrofit2.http.Path;
 /**
  * Created by arka on 4/15/16.
  */
-public interface NoticesInterface {
+public interface NoticesApi {
 
     @GET("notices")
     Call<List<Notice>> getNotices();

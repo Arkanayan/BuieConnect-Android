@@ -6,7 +6,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import me.arkanayan.buieconnect.ServiceGenerator;
-import me.arkanayan.buieconnect.interfaces.LoginInterface;
+import me.arkanayan.buieconnect.apis.LoginApi;
 import me.arkanayan.buieconnect.models.AuthResponse;
 import me.arkanayan.buieconnect.models.LoginToken;
 import okhttp3.MediaType;
@@ -20,10 +20,10 @@ public class LoginService {
 
     private String TAG = this.getClass().getSimpleName();
 
-    private LoginInterface loginInterface;
+    private LoginApi loginApi;
 
     public LoginService() {
-        this.loginInterface = ServiceGenerator.createService(LoginInterface.class);
+        this.loginApi = ServiceGenerator.createService(LoginApi.class);
     }
 
     public Call<AuthResponse> getLoginCall(String idToken) {
@@ -35,7 +35,7 @@ public class LoginService {
         Log.d(TAG, "doLogin: Gson json: " + json);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
 
-        Call<AuthResponse> responseCall = loginInterface.login(requestBody);
+        Call<AuthResponse> responseCall = loginApi.login(requestBody);
 
         return responseCall;
     }
