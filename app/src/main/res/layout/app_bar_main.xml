@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="#eeeeee"
     tools:context="me.arkanayan.buieconnect.activities.MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -22,7 +23,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main"/>
+    <include
+        layout="@layout/content_main"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -30,11 +31,14 @@ import io.fabric.sdk.android.Fabric;
 import me.arkanayan.buieconnect.BuildConfig;
 import me.arkanayan.buieconnect.R;
 import me.arkanayan.buieconnect.exceptions.UserDetailsNotPresent;
+import me.arkanayan.buieconnect.models.Notice;
 import me.arkanayan.buieconnect.models.User;
 import me.arkanayan.buieconnect.utils.Prefs;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, NoticesFragment.OnListFragmentInteractionListener {
+
+    private FloatingActionButton mFab;
 
 /*    @Bind(R.id.text_view_header_name)
     TextView headerName;
@@ -65,6 +69,13 @@ public class MainActivity extends AppCompatActivity
         }
 
         setContentView(R.layout.activity_main);
+
+        NoticesFragment noticesFragment = NoticesFragment.newInstance(1);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_fragment, noticesFragment);
+        //transaction.addToBackStack(null);
+        transaction.commit();
+
 //        ButterKnife.bind(this);
 
         // Toolbar
@@ -78,8 +89,8 @@ public class MainActivity extends AppCompatActivity
             .putContentId("screen-main"));
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -166,5 +177,10 @@ public class MainActivity extends AppCompatActivity
 
     public static Intent getIntent(Context context) {
         return new Intent(context, MainActivity.class);
+    }
+
+    @Override
+    public void onNoticeSelected(Notice item) {
+        Snackbar.make(mFab, item.getMessage(), Snackbar.LENGTH_SHORT).show();
     }
 }
