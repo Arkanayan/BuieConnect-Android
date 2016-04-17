@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity
         // Add noticelist fragment
         NoticesFragment noticesFragment = NoticesFragment.newInstance(1);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.main_fragment, noticesFragment);
+        transaction.replace(R.id.fragment_container, noticesFragment);
         //transaction.addToBackStack(null);
         transaction.commit();
 

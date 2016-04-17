@@ -1,5 +1,6 @@
 package me.arkanayan.buieconnect.activities;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,10 @@ import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.ViewSwitcher;
+
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,17 +99,16 @@ public class NoticesFragment extends Fragment {
             recyclerView.setItemAnimator(new SlideInRightAnimator(new OvershootInterpolator(0.5f)));
             recyclerView.getItemAnimator().setAddDuration(400);
 
-             final List<Notice> notices = new ArrayList<Notice>();
+            final List<Notice> notices = new ArrayList<Notice>();
 //            for (int i = 0 ; i < 1; i++) {
 //                Notice tempNotice = new Notice();
 //                tempNotice.setTitle("## This is title* " + i);
 //                tempNotice.setMessage("*This is message " + i + "*");
 //                notices.add(tempNotice);
 //            }
-            final ProgressBar dialog = (ProgressBar) view.findViewById(R.id.notice_progressbar);
-            dialog.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-
+            // final ProgressBar dialog = (ProgressBar) view.findViewById(R.id.notice_progressbar);
+            //recyclerView.setVisibility(View.GONE);
+            final RelativeLayout indicatorView = (RelativeLayout) view.findViewById(R.id.loadingIndicatorView);
 
             final NoticesAdapter noticesAdapter = new NoticesAdapter(notices, mListener);
             final SlideInBottomAnimationAdapter adapter = new SlideInBottomAnimationAdapter(noticesAdapter);
@@ -128,18 +132,21 @@ public class NoticesFragment extends Fragment {
 //                        adapter.setDuration(500);
 //                        SlideInBottomAnimatorAdapter<NoticesAdapter.ViewHolder> adapter =
 //                                new SlideInBottomAnimatorAdapter<>(noticesAdapter, recyclerView);
-                        dialog.setVisibility(View.GONE);
+                        // dialog.setVisibility(View.GONE);
+
+                        //   recyclerView.setAdapter(adapter);
+                        hideLoadingIndicator();
                         recyclerView.setVisibility(View.VISIBLE);
-                     //   recyclerView.setAdapter(adapter);
+
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 notices.addAll(response.body());
                                 adapter.notifyItemRangeChanged(0, notices.size() - 1);
                             }
-                        },100);
+                        }, 100);
 
-                       // adapter.notifyItemInserted(notices.size() - 1);
+                        // adapter.notifyItemInserted(notices.size() - 1);
 //                        synchronized (recyclerView) {
 //                            recyclerView.notify();
 //                        }
@@ -156,8 +163,36 @@ public class NoticesFragment extends Fragment {
         return view;
     }
 
+    public void hideLoadingIndicator() {
+        final RelativeLayout indicatorView = (RelativeLayout) getView().findViewById(R.id.loadingIndicatorView);
+        indicatorView.animate().alpha(0.0f).setDuration(500)
+                .setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        indicatorView.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+
+                });
+
+    }
 
     @Override
+
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {

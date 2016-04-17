@@ -100,10 +100,14 @@ dependencies {
 //    }
 
     // Recyclerview animator
-    dependencies {
+
         // jCenter
         compile 'jp.wasabeef:recyclerview-animators:2.2.1'
-    }
+
+    // Loading animations
+    compile 'com.wang.avi:library:1.0.5'
+    compile 'com.nineoldandroids:library:2.4.0'
+
 
 }
 apply plugin: 'com.google.gms.google-services'

@@ -1,21 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-<ProgressBar
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--<ProgressBar
     android:id="@+id/notice_progressbar"
     style="?android:attr/progressBarStyleLarge"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical|center_horizontal"
+    android:layout_gravity="center"
     android:indeterminate="true"
     android:visibility="visible"
     android:indeterminateTintMode="src_atop"
     android:indeterminateTint="@color/colorPrimary"
     android:layout_centerVertical="true"
-    android:layout_centerHorizontal="true" />
+    android:layout_centerHorizontal="true" />-->
+    <RelativeLayout
+        android:animateLayoutChanges="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/loadingIndicatorView"
+        >
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/avloadingIndicatorView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:visibility="visible"
+         app:indicator="LineScalePulseOut"
+         app:indicator_color="@color/colorPrimary"
+    />
+        <TextView
+            android:layout_below="@id/avloadingIndicatorView"
+            android:layout_alignLeft="@id/avloadingIndicatorView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textAlignment="center"
+            android:text="Loading..."
+            />
+    </RelativeLayout>
 
 
 <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
