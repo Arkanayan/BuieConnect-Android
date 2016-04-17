@@ -1,12 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<ProgressBar
+    android:id="@+id/notice_progressbar"
+    style="?android:attr/progressBarStyleLarge"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical|center_horizontal"
+    android:indeterminate="true"
+    android:visibility="visible"
+    android:indeterminateTintMode="src_atop"
+    android:indeterminateTint="@color/colorPrimary"
+    android:layout_centerVertical="true"
+    android:layout_centerHorizontal="true" />
+
+
 <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list"
+    android:id="@+id/recycler_view_list"
     android:name="me.arkanayan.buieconnect.activities.NoticesFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
     android:scrollbars="vertical"
+    android:visibility="gone"
     tools:context="me.arkanayan.buieconnect.activities.NoticesFragment"
     tools:listitem="@layout/fragment_notices" />
+
+</FrameLayout>

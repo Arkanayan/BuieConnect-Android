@@ -5,18 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
@@ -48,6 +49,7 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 
 public class EditUserActivity extends AppCompatActivity implements Validator.ValidationListener {
 
@@ -97,13 +99,19 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
 
     private boolean mFirsTimeEdit = false;
 
+    private ImageView mSaveItem;
     ProgressDialog mProgressDialog;
+
+
+   // public TourGuide mTutorialHandler;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         editUserBinding = DataBindingUtil.setContentView(this, R.layout.activity_edit_user);
 
-        ActionBar toolbar = getSupportActionBar();
+        final ActionBar toolbar = getSupportActionBar();
         toolbar.setDisplayHomeAsUpEnabled(true);
         toolbar.setTitle("Edit your details");
 
@@ -127,6 +135,8 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
 
         mProgressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
 
+        // save action item
+        // mSaveItem = (MenuItem) findViewById(R.id.action_save);
 
         boolean isUserDetailsPresent = mPref.getBoolean(Prefs.Key.IS_USER_DETAILS_PRESENT);
 
@@ -158,6 +168,7 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
 
                     if (mUser != null && response.isSuccessful()) {
                         Log.d(TAG, "onResponse: Reg Date: " + mUser.getRegDate().toString());
+
                         editUserBinding.setUser(mUser);
                         // Analytics
                         Answers.getInstance().logCustom(new CustomEvent("User Retrived")
@@ -198,6 +209,7 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
 
 
         } else if (isUserDetailsPresent){
+                mFirsTimeEdit = false;
                 try {
                     mAuthToken = mPref.getString(Prefs.Key.AUTH_TOKEN);
                     mPref.put(Prefs.Key.AUTH_TOKEN, mAuthToken);
@@ -343,9 +355,42 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
          getMenuInflater().inflate(R.menu.edit_user_menu, menu);
+/*
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+//                MenuItem menuItem = menu.getItem(0);
+//                mSaveItem = (ImageView) menuItem.getActionView();
+
+
+
+            }
+        });
+*/
+
+       // mSaveItem = (ImageView) menu.findItem(R.id.action_save).getActionView();
+
+/*        ToolTip toolTip = new ToolTip()
+                .setTitle("Welcome!")
+                .setDescription("Click on Get Started to begin...")
+                .setGravity(Gravity.LEFT|Gravity.BOTTOM);
+
+        mTutorialHandler = TourGuide.init(this).with(TourGuide.Technique.Click)
+                .motionType(TourGuide.MotionType.ClickOnly)
+                .setPointer(new Pointer())
+                .setToolTip(toolTip)
+                .setOverlay(new Overlay())
+                .playOn(mSaveItem);*/
+
          return super.onCreateOptionsMenu(menu);
+    }
+
+    public View getSaveActionView() {
+        Window window = getWindow();
+        View v = window.getDecorView();
+        return v.findViewById(R.id.action_save);
     }
 
     @Override
@@ -353,6 +398,10 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
         switch (item.getItemId()) {
             case R.id.action_save:
                 mEditUserValidator.validate();
+                break;
+            case android.R.id.home:
+                finish();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

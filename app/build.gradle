@@ -12,6 +12,10 @@ apply plugin: 'io.fabric'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+
+    maven(){
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 }
 
 
@@ -89,6 +93,17 @@ dependencies {
         transitive = true;
     }
     compile 'com.commit451:bypasses:1.0.1'
+
+    // Material showcase view
+//    compile ('com.github.worker8:tourguide:1.0.17-SNAPSHOT@aar'){
+//        transitive=true
+//    }
+
+    // Recyclerview animator
+    dependencies {
+        // jCenter
+        compile 'jp.wasabeef:recyclerview-animators:2.2.1'
+    }
 
 }
 apply plugin: 'com.google.gms.google-services'

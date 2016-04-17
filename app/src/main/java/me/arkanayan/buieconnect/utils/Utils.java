@@ -19,5 +19,10 @@ public class Utils {
 
         return requestBody;
     }
+//
+//    public static CharSequence getMarkdownToString(String string) {
+//        String messageMarkdownString = string;
+//        CharSequence messageString = mBypass.markdownToSpannable(messageMarkdownString);
+//    }
 
 }

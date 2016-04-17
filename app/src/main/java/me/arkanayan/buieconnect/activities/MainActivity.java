@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
@@ -182,6 +183,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNoticeSelected(Notice item) {
+        Toast.makeText(MainActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
         Snackbar.make(mFab, item.getMessage(), Snackbar.LENGTH_SHORT).show();
     }
+
 }

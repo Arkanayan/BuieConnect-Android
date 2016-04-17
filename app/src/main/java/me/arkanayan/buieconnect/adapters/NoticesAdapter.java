@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.primitives.Chars;
 
@@ -45,6 +46,11 @@ public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.ViewHold
         return new ViewHolder(view);
     }
 
+    public void addItem(Notice notice) {
+        mValues.add(notice);
+        notifyItemInserted(mValues.size() - 1);
+    }
+
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
@@ -57,6 +63,7 @@ public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.ViewHold
         String messageMarkdownString = mValues.get(position).getMessage();
         CharSequence messageString = mBypass.markdownToSpannable(messageMarkdownString);
         holder.mMessageView.setText(messageString);
+        //Log.d(TAG, "onBindViewHolder: markdown message: " + messageString);
         holder.mMessageView.setMovementMethod(LinkMovementMethod.getInstance());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +74,11 @@ public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.ViewHold
                     // fragment is attached to one) that an item has been selected.
                     Log.d(TAG, "onClick: position: " + holder.getAdapterPosition());
                     mListener.onNoticeSelected(holder.mItem);
+                    // test code, add new notice to see animation
+//                    Notice tempNotice = new Notice();
+//                    tempNotice.setTitle("This is new notice");
+//                    tempNotice.setMessage("new message");
+//                    addItem(tempNotice);
                 }
             }
         });
