@@ -165,29 +165,32 @@ public class NoticesFragment extends Fragment {
 
     public void hideLoadingIndicator() {
         final RelativeLayout indicatorView = (RelativeLayout) getView().findViewById(R.id.loadingIndicatorView);
-        indicatorView.animate().alpha(0.0f).setDuration(500)
-                .setListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
+        if (indicatorView != null) {
+            indicatorView.animate().alpha(0.0f).setDuration(500)
+                    .setListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        indicatorView.setVisibility(View.GONE);
-                    }
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            indicatorView.setVisibility(View.GONE);
+                        }
 
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
 
-                    }
+                        }
 
-                });
+                    });
+        }
+
 
     }
 

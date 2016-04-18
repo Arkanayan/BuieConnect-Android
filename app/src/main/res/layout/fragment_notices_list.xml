@@ -25,7 +25,7 @@
     <com.wang.avi.AVLoadingIndicatorView
         android:id="@+id/avloadingIndicatorView"
         android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_height="70dp"
         android:layout_gravity="center"
         android:visibility="visible"
          app:indicator="LineScalePulseOut"
