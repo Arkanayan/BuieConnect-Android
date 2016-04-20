@@ -135,7 +135,7 @@ public class NoticesFragment extends Fragment {
                         // dialog.setVisibility(View.GONE);
 
                         //   recyclerView.setAdapter(adapter);
-                        hideLoadingIndicator();
+                        indicatorView.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.VISIBLE);
 
                         new Handler().postDelayed(new Runnable() {
