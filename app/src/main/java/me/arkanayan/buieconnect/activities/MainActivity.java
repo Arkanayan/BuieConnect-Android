@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 
 import io.fabric.sdk.android.services.common.Crash;
 import me.arkanayan.buieconnect.R;
@@ -57,6 +59,11 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
+        // analytics
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Main Screen")
+                .putContentType("Screen")
+                .putContentId("screen-main"));
 
         // Add noticelist fragment
         NoticesFragment noticesFragment = NoticesFragment.newInstance(1);

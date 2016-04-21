@@ -2,14 +2,10 @@ package me.arkanayan.buieconnect.utils;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.res.Resources;
 
 import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.firebase.client.Firebase;
-import com.firebase.client.Logger;
 
 import io.fabric.sdk.android.Fabric;
 import me.arkanayan.buieconnect.BuildConfig;
@@ -32,12 +28,6 @@ public class App extends Application {
                 .build();
 
         Fabric.with(this, crashlyticsKit);
-
-        // analytics
-        Answers.getInstance().logContentView(new ContentViewEvent()
-                .putContentName("Main Screen")
-                .putContentType("Screen")
-                .putContentId("screen-main"));
 
 
         // Initialize firebase
