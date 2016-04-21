@@ -1,9 +1,7 @@
 package me.arkanayan.buieconnect.activities;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,34 +9,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AnticipateInterpolator;
-import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.ViewSwitcher;
+import android.widget.Toast;
 
-import com.wang.avi.AVLoadingIndicatorView;
+import com.firebase.client.Firebase;
+import com.firebase.client.Query;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.SlideInBottomAnimationAdapter;
-import jp.wasabeef.recyclerview.adapters.SlideInRightAnimationAdapter;
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import me.arkanayan.buieconnect.R;
-import me.arkanayan.buieconnect.adapters.NoticesAdapter;
+import me.arkanayan.buieconnect.adapters.FirebaseNoticeAdapter;
 import me.arkanayan.buieconnect.models.Notice;
-import me.arkanayan.buieconnect.services.NoticeService;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 /**
@@ -54,6 +36,10 @@ public class NoticesFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+
+    private Firebase ref;
+    private FirebaseNoticeAdapter mAdapter;
+    private Query queryRef;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -75,10 +61,16 @@ public class NoticesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // initialize firebase
+        ref = new Firebase(getString(R.string.firebase_url)).child("notices");
+        queryRef = ref.orderByPriority().limitToFirst(15);
+
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,103 +91,37 @@ public class NoticesFragment extends Fragment {
             recyclerView.setItemAnimator(new SlideInRightAnimator(new OvershootInterpolator(0.5f)));
             recyclerView.getItemAnimator().setAddDuration(400);
 
-            final List<Notice> notices = new ArrayList<Notice>();
-//            for (int i = 0 ; i < 1; i++) {
-//                Notice tempNotice = new Notice();
-//                tempNotice.setTitle("## This is title* " + i);
-//                tempNotice.setMessage("*This is message " + i + "*");
-//                notices.add(tempNotice);
-//            }
-            // final ProgressBar dialog = (ProgressBar) view.findViewById(R.id.notice_progressbar);
-            //recyclerView.setVisibility(View.GONE);
-            final RelativeLayout indicatorView = (RelativeLayout) view.findViewById(R.id.loadingIndicatorView);
+           // final RelativeLayout indicatorView = (RelativeLayout) view.findViewById(R.id.loadingIndicatorView);
 
-            final NoticesAdapter noticesAdapter = new NoticesAdapter(notices, mListener);
-            final SlideInBottomAnimationAdapter adapter = new SlideInBottomAnimationAdapter(noticesAdapter);
+            mAdapter = new FirebaseNoticeAdapter(Notice.class, R.layout.fragment_notices, FirebaseNoticeAdapter.ViewHolder.class
+                    , queryRef, mListener);
+
+            // final NoticesAdapter noticesAdapter = new NoticesAdapter(notices, mListener);
+            final SlideInBottomAnimationAdapter adapter = new SlideInBottomAnimationAdapter(mAdapter);
             adapter.setInterpolator(new OvershootInterpolator());
-            adapter.setDuration(500);
-            recyclerView.setAdapter(adapter);
+            adapter.setDuration(1000);
+            recyclerView.setAdapter(mAdapter);
 
-//            dialog.setVisibility(View.GONE);
-//            recyclerView.setVisibility(View.VISIBLE);
-            //todo fetch and display notices here
-            NoticeService noticeService = new NoticeService();
-
-            Call<List<Notice>> noticesCall = noticeService.getNoticesCall();
-            noticesCall.enqueue(new Callback<List<Notice>>() {
+            // Use to scroll to top to show recent added notice
+            mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override
-                public void onResponse(Call<List<Notice>> call, final Response<List<Notice>> response) {
-                    if (response.isSuccessful()) {
-//                        NoticesAdapter noticesAdapter = new NoticesAdapter((response.body()), mListener);
-//                        ScaleInAnimationAdapter adapter = new ScaleInAnimationAdapter(noticesAdapter);
-//                        adapter.setInterpolator(new OvershootInterpolator());
-//                        adapter.setDuration(500);
-//                        SlideInBottomAnimatorAdapter<NoticesAdapter.ViewHolder> adapter =
-//                                new SlideInBottomAnimatorAdapter<>(noticesAdapter, recyclerView);
-                        // dialog.setVisibility(View.GONE);
-
-                        //   recyclerView.setAdapter(adapter);
-                        indicatorView.setVisibility(View.GONE);
-                        recyclerView.setVisibility(View.VISIBLE);
-
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                notices.addAll(response.body());
-                                adapter.notifyItemRangeChanged(0, notices.size() - 1);
-                            }
-                        }, 100);
-
-                        // adapter.notifyItemInserted(notices.size() - 1);
-//                        synchronized (recyclerView) {
-//                            recyclerView.notify();
-//                        }
-
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<List<Notice>> call, Throwable t) {
-
+                public void onItemRangeInserted(int positionStart, int itemCount) {
+                    super.onItemRangeInserted(positionStart, itemCount);
+                    recyclerView.smoothScrollToPosition(0);
                 }
             });
+
+
         }
         return view;
     }
-
-    public void hideLoadingIndicator() {
-        final RelativeLayout indicatorView = (RelativeLayout) getView().findViewById(R.id.loadingIndicatorView);
-        if (indicatorView != null) {
-            indicatorView.animate().alpha(0.0f).setDuration(500)
-                    .setListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            indicatorView.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
-
-                        }
-
-                    });
-        }
-
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAdapter.cleanup();
     }
 
     @Override
-
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {

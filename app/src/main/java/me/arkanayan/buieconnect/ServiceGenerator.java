@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 
+import me.arkanayan.buieconnect.utils.App;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -19,7 +20,9 @@ import retrofit2.Retrofit;
 public class ServiceGenerator {
 
     //TODO change main url here
-    public static final String API_BASE_URL = "http://buieconnect.arkanayan.me/api/v1/";
+    //public static final String API_BASE_URL = "http://buieconnect.arkanayan.me/api/v1/";
+
+    public static final String API_BASE_URL = App.getContext().getString(R.string.app_server_url);
 
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 

@@ -30,6 +30,8 @@ android {
         versionName "1.0"
 
         resValue "string", "server_client_id", SERVER_CLIENT_ID
+        resValue "string", "firebase_url", FIREBASE_URL
+        resValue "string", "app_server_url", APP_SERVER_URL
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -105,8 +107,13 @@ dependencies {
         compile 'jp.wasabeef:recyclerview-animators:2.2.1'
 
     // Loading animations
-    compile 'com.wang.avi:library:1.0.5'
-    compile 'com.nineoldandroids:library:2.4.0'
+//    compile 'com.wang.avi:library:1.0.5'
+//    compile 'com.nineoldandroids:library:2.4.0'
+    // firebase
+    compile 'com.firebase:firebase-client-android:2.3.1'
+    compile 'com.firebaseui:firebase-ui:0.3.1'
+
+
 
 
 }

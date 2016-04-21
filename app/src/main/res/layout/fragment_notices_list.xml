@@ -15,11 +15,12 @@
     android:indeterminateTint="@color/colorPrimary"
     android:layout_centerVertical="true"
     android:layout_centerHorizontal="true" />-->
-    <RelativeLayout
+<!--    <RelativeLayout
         android:animateLayoutChanges="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:visibility="gone"
         android:id="@+id/loadingIndicatorView"
         >
     <com.wang.avi.AVLoadingIndicatorView
@@ -40,7 +41,7 @@
             android:textAlignment="center"
             android:text="Loading..."
             />
-    </RelativeLayout>
+    </RelativeLayout>-->
 
 
 <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -52,7 +53,7 @@
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
     android:scrollbars="vertical"
-    android:visibility="gone"
+    android:visibility="visible"
     tools:context="me.arkanayan.buieconnect.activities.NoticesFragment"
     tools:listitem="@layout/fragment_notices" />
 

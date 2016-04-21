@@ -5,11 +5,16 @@ Android app for Buie Connect
 
 ## Build Requirements
 ### Variables:
-**SERVER_CLIENT_ID** = \<google sign in client id\> in app level build.gradle file
+#### App level build.gradle
+   - **SERVER_CLIENT_ID** = \<google sign in client id\>
+   - **FIREBASE_URL** = \<Firebase app url\>
+   - **APP_SERVER_URL** = \<App server url with api path\> (e.g. http://buieconnect.arkanayan.me/api/v1/ )
 
 `
 android {
     resValue "string", "server_client_id", SERVER_CLIENT_ID
-    }
+    resValue "string", "firebase_url", FIREBASE_URL
+    resValue "string", "app_server_url", APP_SERVER_URL
+}
 `
     

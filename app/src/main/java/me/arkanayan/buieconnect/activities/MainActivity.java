@@ -3,13 +3,12 @@ package me.arkanayan.buieconnect.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,18 +16,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
-import com.crashlytics.android.core.CrashlyticsCore;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import io.fabric.sdk.android.Fabric;
-import me.arkanayan.buieconnect.BuildConfig;
+import io.fabric.sdk.android.services.common.Crash;
 import me.arkanayan.buieconnect.R;
 import me.arkanayan.buieconnect.exceptions.UserDetailsNotPresent;
 import me.arkanayan.buieconnect.models.Notice;
@@ -38,19 +32,15 @@ import me.arkanayan.buieconnect.utils.Prefs;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NoticesFragment.OnListFragmentInteractionListener {
 
-    private FloatingActionButton mFab;
-
 /*    @Bind(R.id.text_view_header_name)
     TextView headerName;
 
     @Bind(R.id.text_view_header_email)
     TextView headerEmail;*/
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
 
         // Launches MainActivity if user is logged in else launches login activity
         boolean isLoggedIn = Prefs.getInstance(this).getBoolean(Prefs.Key.IS_LOGGED_IN);
@@ -62,14 +52,11 @@ public class MainActivity extends AppCompatActivity
             finish();
         }
 
+       // Debug.startMethodTracing("startup");
+        super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
-        // Crashlytics initialize
-        Crashlytics crashlyticsKit = new Crashlytics.Builder()
-                .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-                .build();
-
-        Fabric.with(this, crashlyticsKit);
 
         // Add noticelist fragment
         NoticesFragment noticesFragment = NoticesFragment.newInstance(1);
@@ -84,21 +71,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // analytics
-        Answers.getInstance().logContentView(new ContentViewEvent()
-            .putContentName("Main Screen")
-            .putContentType("Screen")
-            .putContentId("screen-main"));
 
-
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         // Navigation Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -115,12 +88,25 @@ public class MainActivity extends AppCompatActivity
         TextView headerName = (TextView) headerview.findViewById(R.id.text_view_header_name);
         try {
             User user = User.loadUserFromPreference(this);
+
+            //Crashlytics indentifier
+            Crashlytics.setUserName(user.getFirstName());
+            Crashlytics.setUserIdentifier(String.valueOf(user.getId()));
+
             headerName.setText(String.format(getString(R.string.full_name), user.getFirstName(), user.getLastName()));
             headerEmail.setText(user.getEmail());
         } catch (UserDetailsNotPresent userDetailsNotPresent) {
+            Crashlytics.logException(userDetailsNotPresent);
             userDetailsNotPresent.printStackTrace();
         }
 
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+     //   Debug.stopMethodTracing();
     }
 
 
@@ -183,8 +169,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNoticeSelected(Notice item) {
-        Toast.makeText(MainActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
-        Snackbar.make(mFab, item.getMessage(), Snackbar.LENGTH_SHORT).show();
+       // Toast.makeText(MainActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
     }
 
 }
