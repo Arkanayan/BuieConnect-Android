@@ -53,7 +53,7 @@ android {
     }
 
     dexOptions {
-        javaMaxHeapSize "1g"
+        javaMaxHeapSize "2g"
     }
 }
 
@@ -97,9 +97,9 @@ dependencies {
     compile 'com.commit451:bypasses:1.0.1'
 
     // Material showcase view
-//    compile ('com.github.worker8:tourguide:1.0.17-SNAPSHOT@aar'){
-//        transitive=true
-//    }
+    /*compile ('com.github.worker8:tourguide:1.0.17-SNAPSHOT@aar'){
+        transitive=true
+    }*/
 
     // Recyclerview animator
 
@@ -117,7 +117,6 @@ dependencies {
     compile('com.mikepenz:aboutlibraries:5.6.5@aar') {
         transitive = true
     }
-
 
 
 }

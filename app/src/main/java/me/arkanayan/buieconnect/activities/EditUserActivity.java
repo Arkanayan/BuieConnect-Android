@@ -1,7 +1,9 @@
 package me.arkanayan.buieconnect.activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -10,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -110,6 +113,8 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         editUserBinding = DataBindingUtil.setContentView(this, R.layout.activity_edit_user);
+
+        mActivity = this;
 
         final ActionBar toolbar = getSupportActionBar();
         toolbar.setDisplayHomeAsUpEnabled(true);
@@ -354,9 +359,57 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
         mProgressDialog.dismiss();
     }
 
+
+  //  public TourGuide mTutorialHandler;
+    private Activity mActivity;
+
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
          getMenuInflater().inflate(R.menu.edit_user_menu, menu);
+
+        if (mFirsTimeEdit) {
+            final AlertDialog alertDialog = new AlertDialog.Builder(EditUserActivity.this).create();
+            alertDialog.setTitle("Instructions");
+            alertDialog.setMessage("After entering your info, press save then hit back button.");
+            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Got it",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+        }
+
+/*        MenuItem menuItem = menu.findItem(R.id.action_save);
+        final ImageView button = (ImageView) menuItem.getActionView();
+
+        // just adding some padding to look better
+        float density = mActivity.getResources().getDisplayMetrics().density;
+        int padding = (int)(5 * density);
+        button.setPadding(padding, padding, padding, padding);
+
+        // set an image
+        button.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_save_white));
+
+        ToolTip toolTip = new ToolTip()
+                .setTitle("Welcome!")
+                .setDescription("Click on Get Started to begin...")
+                .setGravity(Gravity.LEFT|Gravity.BOTTOM);
+
+        mTutorialHandler = TourGuide.init(this).with(TourGuide.Technique.HorizontalRight)
+                .motionType(TourGuide.MotionType.ClickOnly)
+                .setPointer(new Pointer())
+                .setToolTip(toolTip)
+                .setOverlay(new Overlay())
+                .playOn(button);
+
+        button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                mTutorialHandler.cleanUp();
+            }
+        });*/
 /*
         new Handler().post(new Runnable() {
             @Override
@@ -385,6 +438,7 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
                 .playOn(mSaveItem);*/
 
          return super.onCreateOptionsMenu(menu);
+        //return true;
     }
 
     public View getSaveActionView() {
