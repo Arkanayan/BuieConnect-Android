@@ -41,6 +41,10 @@
         <item>2006</item>
     </string-array>
     <string name="title_activity_notice_detail">Details</string>
+
+        <string name="aboutLibraries_description_showIcon">true</string>
+        <string name="aboutLibraries_description_showVersion">true</string>
+        <string name="aboutLibraries_description_text">Get notices instantly</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

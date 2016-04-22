@@ -17,3 +17,7 @@
 #}
 -keep class com.mobsandgeeks.saripaar.** {*;}
 -keep @com.mobsandgeeks.saripaar.annotation.ValidateUsing class * {*;}
+-keep class .R
+-keep class **.R$* {
+    <fields>;
+}
