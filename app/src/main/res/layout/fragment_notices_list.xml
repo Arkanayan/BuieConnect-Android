@@ -54,6 +54,7 @@
     app:layoutManager="LinearLayoutManager"
     android:scrollbars="vertical"
     android:visibility="visible"
+    android:clickable="true"
     tools:context="me.arkanayan.buieconnect.activities.NoticesFragment"
     tools:listitem="@layout/fragment_notices" />
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="#eeeeee"
+    android:background="@color/background_color_light"
     tools:context="me.arkanayan.buieconnect.activities.MainActivity">
 
     <android.support.design.widget.AppBarLayout

@@ -3,11 +3,8 @@ package me.arkanayan.buieconnect.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,13 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 
-import io.fabric.sdk.android.services.common.Crash;
 import me.arkanayan.buieconnect.R;
 import me.arkanayan.buieconnect.exceptions.UserDetailsNotPresent;
 import me.arkanayan.buieconnect.models.Notice;
@@ -177,6 +172,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onNoticeSelected(Notice item) {
        // Toast.makeText(MainActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
+        startActivity(NoticeDetailActivity.getInstance(this, item));
     }
 
 }
