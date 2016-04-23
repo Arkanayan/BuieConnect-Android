@@ -4,14 +4,15 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.crashlytics.android.answers.LoginEvent;
@@ -171,6 +172,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 @Override
                 public void onFailure(Call<AuthResponse> call, Throwable t) {
+                    Crashlytics.logException(t);
                     progressDialog.dismiss();
                    // Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
                     showLoginFailedAndRetry();
@@ -185,15 +187,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void showLoginFailedAndRetry() {
-        Snackbar.make(signInButton, "Sorry, Login failed" , Snackbar.LENGTH_SHORT)
+       Snackbar snackbar =  Snackbar.make(signInButton, "Sorry, Login failed" , Snackbar.LENGTH_SHORT)
                 .setActionTextColor(Color.CYAN)
                 .setAction("Retry", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         signIn();
                     }
-                })
-                .show();
+                });
+        snackbar.show();
     }
 
     private void showLoginFailedAndRetry(String errorMessage) {

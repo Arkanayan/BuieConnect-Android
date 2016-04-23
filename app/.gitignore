@@ -1,3 +1,5 @@
 /build
 gradle.properties
 fabric.properties
+app-release.apk
+google-services1.json

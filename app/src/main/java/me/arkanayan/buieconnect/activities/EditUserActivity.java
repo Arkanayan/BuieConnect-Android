@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
@@ -56,6 +57,9 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 
 public class EditUserActivity extends AppCompatActivity implements Validator.ValidationListener, GCMListener {
@@ -375,7 +379,7 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
     public boolean onCreateOptionsMenu(final Menu menu) {
          getMenuInflater().inflate(R.menu.edit_user_menu, menu);
 
-        if (mFirsTimeEdit) {
+/*        if (mFirsTimeEdit) {
             final AlertDialog alertDialog = new AlertDialog.Builder(EditUserActivity.this).create();
             alertDialog.setTitle("Instructions");
             alertDialog.setMessage("After entering your info, press save then hit back button.");
@@ -387,19 +391,39 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
                         }
                     });
             alertDialog.show();
-        }
+        }*/
 
-/*        MenuItem menuItem = menu.findItem(R.id.action_save);
+
+
+        MenuItem menuItem = menu.findItem(R.id.action_save);
         final ImageView button = (ImageView) menuItem.getActionView();
 
         // just adding some padding to look better
         float density = mActivity.getResources().getDisplayMetrics().density;
-        int padding = (int)(5 * density);
+        int padding = (int)(10 * density);
         button.setPadding(padding, padding, padding, padding);
 
         // set an image
         button.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_save_white));
 
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+        config.setRenderOverNavigationBar(true);
+
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, "firstTime");
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(button,
+                "After entering your details press save.", "GOT IT");
+
+        sequence.addSequenceItem(editUserBinding.spinnerSemester,
+                "Then hit the back button.", "GOT IT");
+
+        sequence.start();
+
+        /*
         ToolTip toolTip = new ToolTip()
                 .setTitle("Welcome!")
                 .setDescription("Click on Get Started to begin...")
@@ -411,13 +435,14 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
                 .setToolTip(toolTip)
                 .setOverlay(new Overlay())
                 .playOn(button);
+        */
 
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                mTutorialHandler.cleanUp();
+                mEditUserValidator.validate();
             }
-        });*/
+        });
 /*
         new Handler().post(new Runnable() {
             @Override

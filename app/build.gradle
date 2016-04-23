@@ -121,6 +121,9 @@ dependencies {
     //fast gcm
     compile 'com.github.iammert:FastGCM:1.1'
 
+    compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
+
+
 
 
 }

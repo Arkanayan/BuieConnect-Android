@@ -7,7 +7,7 @@
         android:id="@+id/action_save"
         android:orderInCategory="100"
         android:title="Save"
-        android:actionViewClass="android.widget.ImageView"
+        app:actionViewClass="android.widget.ImageView"
         android:icon="@drawable/ic_save_white"
         app:showAsAction="ifRoom"/>
 </menu>
