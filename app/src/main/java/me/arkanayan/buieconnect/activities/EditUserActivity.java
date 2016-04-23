@@ -26,6 +26,8 @@ import android.widget.Toast;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.crashlytics.android.answers.CustomEvent;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.Email;
@@ -39,6 +41,8 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import co.mobiwise.fastgcm.GCMListener;
+import co.mobiwise.fastgcm.GCMManager;
 import me.arkanayan.buieconnect.BuildConfig;
 import me.arkanayan.buieconnect.R;
 import me.arkanayan.buieconnect.databinding.EditUserBinding;
@@ -54,8 +58,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class EditUserActivity extends AppCompatActivity implements Validator.ValidationListener {
+public class EditUserActivity extends AppCompatActivity implements Validator.ValidationListener, GCMListener {
 
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public final String TAG = this.getClass().getSimpleName();
 
     public static final String EXTRA_AUTH_TOKEN = BuildConfig.APPLICATION_ID + ".extra_auth_token";
@@ -115,6 +120,8 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
         editUserBinding = DataBindingUtil.setContentView(this, R.layout.activity_edit_user);
 
         mActivity = this;
+
+        GCMManager.getInstance(this).registerListener(this);
 
         final ActionBar toolbar = getSupportActionBar();
         toolbar.setDisplayHomeAsUpEnabled(true);
@@ -217,7 +224,8 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
                 mFirsTimeEdit = false;
                 try {
                     mAuthToken = mPref.getString(Prefs.Key.AUTH_TOKEN);
-                    mPref.put(Prefs.Key.AUTH_TOKEN, mAuthToken);
+                    // mPref.put(Prefs.Key.AUTH_TOKEN, mAuthToken);
+                   // Log.d(TAG, "Auth token: " + mAuthToken);
                     mUserService = new UserService(mAuthToken);
                     mUser = User.loadUserFromPreference(this);
                     editUserBinding.setUser(mUser);
@@ -487,6 +495,33 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
                 // }
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    @Override
+    public void onDeviceRegisted(String s) {
+        Log.d(TAG, "onDeviceRegisted: token: " + s);
+        GCMManager.getInstance(this).subscribeTopic("global");
+        mUser.setGcmRegId(s);
+    }
+
+    @Override
+    public void onMessage(String s, Bundle bundle) {
+        //Log.d(TAG, "onMessage: from: " + s);
+    }
+
+    @Override
+    public void onPlayServiceError() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
             }
         }
     }
