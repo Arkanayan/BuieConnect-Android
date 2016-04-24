@@ -21,6 +21,7 @@ import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
 import me.arkanayan.buieconnect.R;
 import me.arkanayan.buieconnect.adapters.FirebaseNoticeAdapter;
 import me.arkanayan.buieconnect.models.Notice;
+import me.arkanayan.buieconnect.viewholders.NoticeViewHolder;
 
 
 /**
@@ -93,7 +94,7 @@ public class NoticesFragment extends Fragment {
 
            // final RelativeLayout indicatorView = (RelativeLayout) view.findViewById(R.id.loadingIndicatorView);
 
-            mAdapter = new FirebaseNoticeAdapter(Notice.class, R.layout.fragment_notices, FirebaseNoticeAdapter.ViewHolder.class
+            mAdapter = new FirebaseNoticeAdapter(Notice.class, R.layout.fragment_notices, NoticeViewHolder.class
                     , queryRef, mListener);
 
             // final NoticesAdapter noticesAdapter = new NoticesAdapter(notices, mListener);

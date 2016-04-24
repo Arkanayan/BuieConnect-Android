@@ -10,7 +10,10 @@ Android app for Buie Connect
    - **FIREBASE_URL** = \<Firebase app url\>
    - **APP_SERVER_URL** = \<App server url with api path\> (e.g. http://buieconnect.arkanayan.me/api/v1/ )
 
-`
+### Files:
+- google-services.json ( in app root ) [Get file google-services.json](https://developers.google.com/mobile/add)
+    
+`java
 android {
     resValue "string", "server_client_id", SERVER_CLIENT_ID
     resValue "string", "firebase_url", FIREBASE_URL

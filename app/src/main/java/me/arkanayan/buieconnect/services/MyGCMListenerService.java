@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.google.gson.Gson;
 
 import co.mobiwise.fastgcm.GCMListenerService;
@@ -31,14 +33,20 @@ public class MyGCMListenerService extends GCMListenerService {
         super.onMessageReceived(from, data);
 
         if (data.getString("type").equals("notice")) {
+
             Gson gson = new Gson();
             Notice notice = gson.fromJson(data.getString("data"), Notice.class);
-            Log.d(TAG, "***Bundle Keys****");
+/*            Log.d(TAG, "***Bundle Keys****");
             for (String key : data.keySet()) {
                 Log.d(TAG, key + " : " + data.get(key));
-            }
-            String message = notice.getMessage();
-            String title = notice.getTitle();
+            }*/
+            // analytics
+            Answers.getInstance().logCustom(new CustomEvent("GCM Notice received")
+                    .putCustomAttribute("From", from)
+                    .putCustomAttribute("Notice Id", notice.getId())
+            );
+/*            String message = notice.getMessage();
+            String title = notice.getTitle();*/
             // sends notification
             sendNotification(notice);
         }

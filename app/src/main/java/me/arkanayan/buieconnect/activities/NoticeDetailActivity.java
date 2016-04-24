@@ -10,6 +10,9 @@ import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.uncod.android.bypass.Bypass;
@@ -36,11 +39,20 @@ public class NoticeDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notice_detail);
         ButterKnife.bind(this);
 
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mNotice = getIntent().getParcelableExtra(EXTRA_NOTICE);
 
+        // analytics
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Notice Details Screen")
+                .putContentType("Screen")
+                .putContentId("screen-notice-details")
+                .putCustomAttribute("Notice id", String.valueOf(mNotice.getId()))
+                .putCustomAttribute("Notice title",mNotice.getTitle())
+        );
 
         collapsingToolbarLayout.setTitle(mNotice.getTitle());
 

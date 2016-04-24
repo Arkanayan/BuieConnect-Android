@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.crashlytics.android.answers.CustomEvent;
@@ -189,7 +190,11 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
                         // Analytics
                         Answers.getInstance().logCustom(new CustomEvent("User Retrived")
                                 .putCustomAttribute("Status", "Success")
-                                .putCustomAttribute("Cause", "Login"));
+                                .putCustomAttribute("Cause", "Login")
+                                .putCustomAttribute("User name", mUser.getFirstName())
+                                .putCustomAttribute("User id", String.valueOf(mUser.getId()))
+
+                        );
                     } else {
                         try {
                             // show error message
@@ -333,7 +338,10 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
                     Toast.makeText(EditUserActivity.this, "Update Successful", Toast.LENGTH_SHORT).show();
                     // Analytics
                     Answers.getInstance().logCustom(new CustomEvent("User Edit")
-                                        .putCustomAttribute("Edit status", "Success"));
+                            .putCustomAttribute("Edit status", "Success")
+                            .putCustomAttribute("User name:", mUser.getFirstName())
+                            .putCustomAttribute("User id", String.valueOf(mUser.getId()))
+                    );
                 } else {
                     try {
 
@@ -343,7 +351,11 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
                         // Analytics
                         Answers.getInstance().logCustom(new CustomEvent("User Edit")
                                 .putCustomAttribute("Edit status", "Failed")
-                                .putCustomAttribute("Cause", error.getMessage()));
+                                .putCustomAttribute("Cause", error.getMessage())
+                                .putCustomAttribute("User name", mUser.getFirstName())
+                                .putCustomAttribute("User id", String.valueOf(mUser.getId()))
+
+                        );
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -358,7 +370,10 @@ public class EditUserActivity extends AppCompatActivity implements Validator.Val
                 // Analytics
                 Answers.getInstance().logCustom(new CustomEvent("User Edit")
                         .putCustomAttribute("Edit status", "Failed")
-                        .putCustomAttribute("Cause", t.getMessage()));
+                        .putCustomAttribute("Cause", t.getMessage())
+                        .putCustomAttribute("User name:", mUser.getFirstName())
+                        .putCustomAttribute("User id", String.valueOf(mUser.getId()))
+                );
 
                 showErrorAndRetry("Sorry, failed to update ");
             }
